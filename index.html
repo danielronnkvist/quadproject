@@ -23,17 +23,66 @@
 
       camera.position.z = 5;
       var clock =  new THREE.Clock();
+
+      var controls = {
+        z: { pos: false, neg: false },
+        y: { pos: false, neg: false },
+        x: { pos: false, neg: false },
+        yaw: { pos: false, neg: false }
+      };
+
       var render = function () {
-        delta = clock.getDelta();
+        delta = 4*clock.getDelta();
         requestAnimationFrame( render );
 
-        cube.rotation.x += 1 * delta;
-        cube.rotation.y += 1 * delta;
+        if(controls.x.neg){
+          cube.translateX(-delta);
+        }if(controls.x.pos){
+          cube.translateX(delta);
+        }if(controls.y.neg){
+          cube.translateY(-delta);
+        }if(controls.y.pos){
+          cube.translateY(delta);
+        }if(controls.z.neg){
+          cube.translateZ(-delta);
+        }if(controls.z.pos){
+          cube.translateZ(delta);
+        }if(controls.yaw.neg){
+          cube.rotation.y -= delta;
+        }if(controls.yaw.pos){
+          cube.rotation.y += delta;
+        }
 
         renderer.render(scene, camera);
       };
 
       render();
+
+      document.onkeydown = function(evt) {
+          console.log(evt.keyCode)
+          switch(evt.keyCode){
+            case 65: /*A*/ controls.x.neg = true; break;
+            case 68: /*D*/ controls.x.pos = true; break;
+            case 75: /*K*/ controls.y.neg = true; break;
+            case 73: /*I*/ controls.y.pos = true; break;
+            case 87: /*W*/ controls.z.neg = true; break;
+            case 83: /*S*/ controls.z.pos = true; break;
+            case 74: /*J*/ controls.yaw.neg = true; break;
+            case 76: /*L*/ controls.yaw.pos = true; break;
+          }
+      };
+      document.onkeyup = function(evt) {
+          switch(evt.keyCode){
+            case 65: /*A*/ controls.x.neg = false; break;
+            case 68: /*D*/ controls.x.pos = false; break;
+            case 75: /*K*/ controls.y.neg = false; break;
+            case 73: /*I*/ controls.y.pos = false; break;
+            case 87: /*W*/ controls.z.neg = false; break;
+            case 83: /*S*/ controls.z.pos = false; break;
+            case 74: /*J*/ controls.yaw.neg = false; break;
+            case 76: /*L*/ controls.yaw.pos = false; break;
+          }
+      };
     </script>
 </body>
 </html>
