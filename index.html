@@ -114,6 +114,7 @@
             case 83: /*S*/ controls.z.pos = true; break;
             case 74: /*J*/ controls.yaw.neg = true; break;
             case 76: /*L*/ controls.yaw.pos = true; break;
+            case 32: /*space*/ reset(); break;
           };
       };
       document.onkeyup = function(evt) {
@@ -128,6 +129,13 @@
             case 76: /*L*/ controls.yaw.pos = false; break;
           };
       };
+      function reset(){
+        cube.position.setX(0);
+        cube.position.setY(0);
+        cube.position.setZ(0);
+        cube.rotation.y = 0;
+        velocities.x = velocities.y = velocities.z = 0;
+      }
     </script>
 </body>
 </html>
