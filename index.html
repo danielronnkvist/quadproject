@@ -12,6 +12,10 @@
     Vx: <span id="vx"></span><br>
     Vy: <span id="vy"></span><br>
     Vz: <span id="vz"></span><br>
+    <br>
+    x: <span id="px"></span><br>
+    y: <span id="py"></span><br>
+    z: <span id="pz"></span><br>
   </p>
   <script src="https://ajax.googleapis.com/ajax/libs/threejs/r69/three.min.js"></script>
   <script>
@@ -31,9 +35,9 @@
       var clock =  new THREE.Clock();
 
       var controls = {
-        z: { pos: false, neg: false },
-        y: { pos: false, neg: false },
-        x: { pos: false, neg: false },
+        z:   { pos: false, neg: false },
+        y:   { pos: false, neg: false },
+        x:   { pos: false, neg: false },
         yaw: { pos: false, neg: false }
       };
       var velocities = {
@@ -60,35 +64,40 @@
         requestAnimationFrame( render );
 
         if(controls.x.neg){
-          velocities.x -= delta
+          velocities.x -= delta;
         }if(controls.x.pos){
-          velocities.x += delta
+          velocities.x += delta;
         }if(!controls.x.pos && !controls.x.neg){
           velocities.decrease(delta, 'x');
         }if(controls.y.neg){
-          velocities.y -= delta
+          velocities.y -= delta;
         }if(controls.y.pos){
-          velocities.y += delta
+          velocities.y += delta;
         }if(!controls.y.pos && !controls.y.neg){
           velocities.decrease(delta, 'y');
         }if(controls.z.neg){
-          velocities.z -= delta
+          velocities.z -= delta;
         }if(controls.z.pos){
-          velocities.z += delta
+          velocities.z += delta;
         }if(!controls.z.pos && !controls.z.neg){
           velocities.decrease(delta, 'z');
         }if(controls.yaw.neg){
-          cube.rotation.y -= delta;
+          cube.rotation.y -= 8*delta;
         }if(controls.yaw.pos){
-          cube.rotation.y += delta;
+          cube.rotation.y += 8*delta;
         }
         cube.translateX(velocities.x);
         cube.translateY(velocities.y);
         cube.translateZ(velocities.z);
 
+        // Display velocities on screen
         document.getElementById('vx').innerHTML = velocities.x;
         document.getElementById('vy').innerHTML = velocities.y;
         document.getElementById('vz').innerHTML = velocities.z;
+
+        document.getElementById('px').innerHTML = cube.position.x;
+        document.getElementById('py').innerHTML = cube.position.y;
+        document.getElementById('pz').innerHTML = cube.position.z;
 
         renderer.render(scene, camera);
       };
@@ -96,7 +105,6 @@
       render();
 
       document.onkeydown = function(evt) {
-          console.log(evt.keyCode)
           switch(evt.keyCode){
             case 65: /*A*/ controls.x.neg = true; break;
             case 68: /*D*/ controls.x.pos = true; break;
@@ -106,7 +114,7 @@
             case 83: /*S*/ controls.z.pos = true; break;
             case 74: /*J*/ controls.yaw.neg = true; break;
             case 76: /*L*/ controls.yaw.pos = true; break;
-          }
+          };
       };
       document.onkeyup = function(evt) {
           switch(evt.keyCode){
@@ -118,7 +126,7 @@
             case 83: /*S*/ controls.z.pos = false; break;
             case 74: /*J*/ controls.yaw.neg = false; break;
             case 76: /*L*/ controls.yaw.pos = false; break;
-          }
+          };
       };
     </script>
 </body>
