@@ -1,5 +1,5 @@
 clear all
-s = 1;
+s = 100;
 g(1:s) = 9.82;
 m(1:s) = 1;
 r = 0.5;
@@ -18,12 +18,24 @@ Tz = abs(T).*cosd(theta).*cosd(phi);
 
 % plot3(Tx, Ty, Tz)
 
-T1 = cosd(theta)*(Tz/4);
-T4 = (Tz/4)*(1 + (1 - cosd(theta)));
-T2 = cosd(phi)*(Tz/4);
-T3 = (Tz/4)*(1 + (1 - cosd(phi)));
+T1 = cosd(theta).*(Tz/4);
+T4 = (Tz/4).*(1 + (1 - cosd(theta)));
+T2 = cosd(phi).*(Tz/4);
+T3 = (Tz/4).*(1 + (1 - cosd(phi)));
 
-v1 = sqrt(T1/(p*A))
-v2 = sqrt(T2/(p*A))
-v3 = sqrt(T3/(p*A))
-v4 = sqrt(T4/(p*A))
+v1 = sqrt(T1/(p*A));
+v2 = sqrt(T2/(p*A));
+v3 = sqrt(T3/(p*A));
+v4 = sqrt(T4/(p*A));
+
+subplot(2,2,1)
+plot(v1)
+
+subplot(2,2,2)
+plot(v2)
+
+subplot(2,2,3)
+plot(v3)
+
+subplot(2,2,4)
+plot(v4)
