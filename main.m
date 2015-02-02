@@ -8,8 +8,10 @@ p = 1.2;
 
 h0(1:s) = 0;
 hf = linspace(0, 4, s);
-theta = linspace(0, 30, s);
-phi = linspace(0, 45, s);
+theta_max = 10;
+theta = linspace(0, theta_max, s);
+phi_max = 60;
+phi = linspace(0, phi_max, s);
 
 T  = (p*A*4*g.*(hf-h0) + m.*g)./(cosd(theta).*cosd(phi));
 Tx = sqrt(-abs(T).^2.*cosd(theta).^2.*(1-1./(cosd(theta).^2)));
@@ -28,14 +30,19 @@ v2 = sqrt(T2/(p*A));
 v3 = sqrt(T3/(p*A));
 v4 = sqrt(T4/(p*A));
 
+suptitle(strcat('Theta: 0-', int2str(theta_max), ' and phi: 0-', int2str(phi_max)));
 subplot(2,2,1)
 plot(v1)
+title('v_1')
 
 subplot(2,2,2)
 plot(v2)
+title('v_2')
 
 subplot(2,2,3)
 plot(v3)
+title('v_3')
 
 subplot(2,2,4)
 plot(v4)
+title('v_4')
