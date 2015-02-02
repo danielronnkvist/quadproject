@@ -4,9 +4,15 @@
   <style>
     body{margin:0;}
     canvas{ width:100%; height: 100%;}
+    #data{color: white; position: absolute;}
   </style>
 </head>
 <body>
+  <p id="data">
+    Vx: <span id="vx"></span><br>
+    Vy: <span id="vy"></span><br>
+    Vz: <span id="vz"></span><br>
+  </p>
   <script src="https://ajax.googleapis.com/ajax/libs/threejs/r69/three.min.js"></script>
   <script>
       var scene = new THREE.Scene();
@@ -16,7 +22,7 @@
       renderer.setSize( window.innerWidth, window.innerHeight );
       document.body.appendChild( renderer.domElement );
 
-      var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+      var geometry = new THREE.BoxGeometry( 1, 0.3, 1 );
       var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
       var cube = new THREE.Mesh( geometry, material );
       scene.add( cube );
@@ -30,6 +36,11 @@
         x: { pos: false, neg: false },
         yaw: { pos: false, neg: false }
       };
+      var velocities = {
+        z: 0,
+        y: 0,
+        x: 0
+      };
 
       var render = function () {
         delta = 4*clock.getDelta();
@@ -37,21 +48,37 @@
 
         if(controls.x.neg){
           cube.translateX(-delta);
+          velocities.x -= delta
         }if(controls.x.pos){
           cube.translateX(delta);
+          velocities.x += delta
+        }if(!controls.x.pos && !controls.x.neg){
+          velocities.x = 0;
         }if(controls.y.neg){
           cube.translateY(-delta);
+          velocities.y -= delta
         }if(controls.y.pos){
           cube.translateY(delta);
+          velocities.y += delta
+        }if(!controls.y.pos && !controls.y.neg){
+          velocities.y = 0;
         }if(controls.z.neg){
           cube.translateZ(-delta);
+          velocities.z -= delta
         }if(controls.z.pos){
           cube.translateZ(delta);
+          velocities.z += delta
+        }if(!controls.z.pos && !controls.z.neg){
+          velocities.z = 0;
         }if(controls.yaw.neg){
           cube.rotation.y -= delta;
         }if(controls.yaw.pos){
           cube.rotation.y += delta;
         }
+
+        document.getElementById('vx').innerHTML = velocities.x;
+        document.getElementById('vy').innerHTML = velocities.y;
+        document.getElementById('vz').innerHTML = velocities.z;
 
         renderer.render(scene, camera);
       };
