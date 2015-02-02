@@ -39,42 +39,52 @@
       var velocities = {
         z: 0,
         y: 0,
-        x: 0
+        x: 0,
+        decrease: function(t, axis){
+          if(Math.abs(this[axis]) > 0){
+            if(this[axis] < 0){
+              this[axis] += 2*t;
+              if(this[axis] > 0)
+                this[axis] = 0;
+            }else{
+              this[axis] -= 2*t;
+              if(this[axis] < 0)
+                this[axis] = 0;
+            }
+          }
+        }
       };
 
       var render = function () {
-        delta = 4*clock.getDelta();
+        delta = clock.getDelta()/4;
         requestAnimationFrame( render );
 
         if(controls.x.neg){
-          cube.translateX(-delta);
           velocities.x -= delta
         }if(controls.x.pos){
-          cube.translateX(delta);
           velocities.x += delta
         }if(!controls.x.pos && !controls.x.neg){
-          velocities.x = 0;
+          velocities.decrease(delta, 'x');
         }if(controls.y.neg){
-          cube.translateY(-delta);
           velocities.y -= delta
         }if(controls.y.pos){
-          cube.translateY(delta);
           velocities.y += delta
         }if(!controls.y.pos && !controls.y.neg){
-          velocities.y = 0;
+          velocities.decrease(delta, 'y');
         }if(controls.z.neg){
-          cube.translateZ(-delta);
           velocities.z -= delta
         }if(controls.z.pos){
-          cube.translateZ(delta);
           velocities.z += delta
         }if(!controls.z.pos && !controls.z.neg){
-          velocities.z = 0;
+          velocities.decrease(delta, 'z');
         }if(controls.yaw.neg){
           cube.rotation.y -= delta;
         }if(controls.yaw.pos){
           cube.rotation.y += delta;
         }
+        cube.translateX(velocities.x);
+        cube.translateY(velocities.y);
+        cube.translateZ(velocities.z);
 
         document.getElementById('vx').innerHTML = velocities.x;
         document.getElementById('vy').innerHTML = velocities.y;
