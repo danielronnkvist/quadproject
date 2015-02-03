@@ -76,8 +76,8 @@ function flightControl(){
       case 73: /*I*/ temp.y.pos = true; break;
       case 87: /*W*/ temp.z.neg = true; break;
       case 83: /*S*/ temp.z.pos = true; break;
-      case 74: /*J*/ temp.yaw.neg = true; break;
-      case 76: /*L*/ temp.yaw.pos = true; break;
+      case 76: /*L*/ temp.yaw.neg = true; break;
+      case 74: /*J*/ temp.yaw.pos = true; break;
       case 32: /*space*/ reset(); break;
     };
   };
@@ -89,8 +89,8 @@ function flightControl(){
       case 73: /*I*/ temp.y.pos = false; break;
       case 87: /*W*/ temp.z.neg = false; break;
       case 83: /*S*/ temp.z.pos = false; break;
-      case 74: /*J*/ temp.yaw.neg = false; break;
-      case 76: /*L*/ temp.yaw.pos = false; break;
+      case 76: /*L*/ temp.yaw.neg = false; break;
+      case 74: /*J*/ temp.yaw.pos = false; break;
     };
   };
 

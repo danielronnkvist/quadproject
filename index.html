@@ -16,6 +16,10 @@
     x: <span id="px"></span><br>
     y: <span id="py"></span><br>
     z: <span id="pz"></span><br>
+    <br>
+    rot x: <span id="rotx"></span><br>
+    rot y: <span id="roty"></span><br>
+    rot z: <span id="rotz"></span><br>
   </p>
   <script src="https://ajax.googleapis.com/ajax/libs/threejs/r69/three.min.js"></script>
   <script src="scripts/flightControl.js"></script>
@@ -67,6 +71,10 @@
       document.getElementById('px').innerHTML = copter.position.x;
       document.getElementById('py').innerHTML = copter.position.y;
       document.getElementById('pz').innerHTML = copter.position.z;
+
+      document.getElementById('rotx').innerHTML = copter.rotation.x * 57,296;
+      document.getElementById('roty').innerHTML = copter.rotation.y * 57,296;
+      document.getElementById('rotz').innerHTML = copter.rotation.z * 57,296;
 
       renderer.render(scene, camera);
     };
