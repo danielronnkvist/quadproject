@@ -74,8 +74,11 @@
           copter.translateY(controls.velocities.y);
 
         for (var i = 0; i < 4; i++) {
-          rotors[i].rotation.y += 10*(controls.velocities.z + controls.velocities.y + controls.velocities.x);
+          rotors[i].rotation.y += 10*(Math.cos(controls.velocities.z) + Math.cos(controls.velocities.y) + Math.cos(controls.velocities.x));
         };
+        copter.rotation.z = -controls.velocities.x;
+        copter.rotation.x = controls.velocities.z;
+
 
         // Display velocities on screen
         document.getElementById('vx').innerHTML = controls.velocities.x;
