@@ -21,57 +21,57 @@
   <script src="scripts/flightControl.js"></script>
   <script src="scripts/geometry.js"></script>
   <script>
-      var scene = new THREE.Scene();
-      var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
+    var scene = new THREE.Scene();
+    var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
 
-      var renderer = new THREE.WebGLRenderer();
-      renderer.setSize( window.innerWidth, window.innerHeight );
-      document.body.appendChild( renderer.domElement );
+    var renderer = new THREE.WebGLRenderer();
+    renderer.setSize( window.innerWidth, window.innerHeight );
+    document.body.appendChild( renderer.domElement );
 
-      scene.add(copter);
+    scene.add(copter);
 
-      camera.position.z = 5;
-      camera.position.y = 2;
-      var clock =  new THREE.Clock(),
-          controls = flightControl();
-
-
-      var render = function () {
-        delta = clock.getDelta()/4;
-        requestAnimationFrame( render );
-
-        // Update velocities and rotations
-        controls.update(delta);
-
-        // Apply transformations
-        copter.translateX(controls.velocities.x);
-        copter.translateZ(controls.velocities.z);
-
-        if(controls.velocities.y + copter.position.y < 0)
-          copter.position.y = 0;
-        else
-          copter.translateY(controls.velocities.y);
-
-        for (var i = 0; i < 4; i++) {
-          rotors[i].rotation.y += 2*(Math.cos(controls.velocities.z) + Math.cos(controls.velocities.y) + Math.cos(controls.velocities.x));
-        };
-        copter.rotation.z = -controls.velocities.x;
-        copter.rotation.x = controls.velocities.z;
+    camera.position.z = 5;
+    camera.position.y = 2;
+    var clock =  new THREE.Clock(),
+        controls = flightControl();
 
 
-        // Display velocities on screen
-        document.getElementById('vx').innerHTML = controls.velocities.x;
-        document.getElementById('vy').innerHTML = controls.velocities.y;
-        document.getElementById('vz').innerHTML = controls.velocities.z;
+    var render = function () {
+      delta = clock.getDelta()/4;
+      requestAnimationFrame( render );
 
-        document.getElementById('px').innerHTML = copter.position.x;
-        document.getElementById('py').innerHTML = copter.position.y;
-        document.getElementById('pz').innerHTML = copter.position.z;
+      // Update velocities and rotations
+      controls.update(delta);
 
-        renderer.render(scene, camera);
+      // Apply transformations
+      copter.translateX(controls.velocities.x);
+      copter.translateZ(controls.velocities.z);
+
+      if(controls.velocities.y + copter.position.y < 0)
+        copter.position.y = 0;
+      else
+        copter.translateY(controls.velocities.y);
+
+      for (var i = 0; i < 4; i++) {
+        rotors[i].rotation.y += 2*(Math.cos(controls.velocities.z) + Math.cos(controls.velocities.y) + Math.cos(controls.velocities.x));
       };
+      copter.rotation.z = -controls.velocities.x;
+      copter.rotation.x = controls.velocities.z;
 
-      render();
+
+      // Display velocities on screen
+      document.getElementById('vx').innerHTML = controls.velocities.x;
+      document.getElementById('vy').innerHTML = controls.velocities.y;
+      document.getElementById('vz').innerHTML = controls.velocities.z;
+
+      document.getElementById('px').innerHTML = copter.position.x;
+      document.getElementById('py').innerHTML = copter.position.y;
+      document.getElementById('pz').innerHTML = copter.position.z;
+
+      renderer.render(scene, camera);
+    };
+
+    render();
 
     </script>
 </body>
