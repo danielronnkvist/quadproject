@@ -1,3 +1,14 @@
+/*
+
+flightControl()
+
+Returns an object consisting of if buttons are pressed and velocities with their value.
+
+The function temp.velocities.decrease(t, axis) decreases the velocity on the axis by 2*t.
+  * axis [string]
+  * t [float]
+
+*/
 function flightControl(){
   var temp = {};
   temp.x   = { pos: false, neg: false };
@@ -23,6 +34,40 @@ function flightControl(){
       }
     }
   };
+
+  /*
+
+  Alters the velocity with delta depending on which buttons are pressed.
+  If no button is pressed on an axis the axis velocity is decreased.
+
+  */
+  temp.update = function(delta) {
+    if(temp.x.neg){
+      temp.velocities.x -= delta;
+    }if(temp.x.pos){
+      temp.velocities.x += delta;
+    }if(!temp.x.pos && !temp.x.neg){
+      temp.velocities.decrease(delta, 'x');
+    }if(temp.y.neg){
+      temp.velocities.y -= delta;
+    }if(temp.y.pos){
+      temp.velocities.y += delta;
+    }if(!temp.y.pos && !temp.y.neg){
+      temp.velocities.decrease(delta, 'y');
+    }if(temp.z.neg){
+      temp.velocities.z -= delta;
+    }if(temp.z.pos){
+      temp.velocities.z += delta;
+    }if(!temp.z.pos && !temp.z.neg){
+      temp.velocities.decrease(delta, 'z');
+    }if(temp.yaw.neg){
+      copter.rotation.y -= 8*delta;
+    }if(temp.yaw.pos){
+      copter.rotation.y += 8*delta;
+    }
+  };
+
+  // Event listeners on keypresses
   document.onkeydown = function(evt) {
       switch(evt.keyCode){
         case 65: /*A*/ temp.x.neg = true; break;
@@ -48,6 +93,8 @@ function flightControl(){
         case 76: /*L*/ temp.yaw.pos = false; break;
       };
   };
+
+  // Reset the copters values
   function reset(){
     copter.position.setX(0);
     copter.position.setY(0);
@@ -55,5 +102,6 @@ function flightControl(){
     copter.rotation.y = 0;
     temp.velocities.x = temp.velocities.y = temp.velocities.z = 0;
   };
+
   return temp;
 }

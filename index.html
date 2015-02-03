@@ -40,29 +40,8 @@
         delta = clock.getDelta()/4;
         requestAnimationFrame( render );
 
-        if(controls.x.neg){
-          controls.velocities.x -= delta;
-        }if(controls.x.pos){
-          controls.velocities.x += delta;
-        }if(!controls.x.pos && !controls.x.neg){
-          controls.velocities.decrease(delta, 'x');
-        }if(controls.y.neg){
-          controls.velocities.y -= delta;
-        }if(controls.y.pos){
-          controls.velocities.y += delta;
-        }if(!controls.y.pos && !controls.y.neg){
-          controls.velocities.decrease(delta, 'y');
-        }if(controls.z.neg){
-          controls.velocities.z -= delta;
-        }if(controls.z.pos){
-          controls.velocities.z += delta;
-        }if(!controls.z.pos && !controls.z.neg){
-          controls.velocities.decrease(delta, 'z');
-        }if(controls.yaw.neg){
-          copter.rotation.y -= 8*delta;
-        }if(controls.yaw.pos){
-          copter.rotation.y += 8*delta;
-        }
+        // Update velocities and rotations
+        controls.update(delta);
 
         // Apply transformations
         copter.translateX(controls.velocities.x);
@@ -74,7 +53,7 @@
           copter.translateY(controls.velocities.y);
 
         for (var i = 0; i < 4; i++) {
-          rotors[i].rotation.y += 10*(Math.cos(controls.velocities.z) + Math.cos(controls.velocities.y) + Math.cos(controls.velocities.x));
+          rotors[i].rotation.y += 2*(Math.cos(controls.velocities.z) + Math.cos(controls.velocities.y) + Math.cos(controls.velocities.x));
         };
         copter.rotation.z = -controls.velocities.x;
         copter.rotation.x = controls.velocities.z;
