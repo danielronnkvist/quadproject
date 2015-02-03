@@ -1,6 +1,6 @@
 <html>
 <head>
-  <title>My first Three.js</title>
+  <title>ulf</title>
   <style>
     body{margin:0;}
     canvas{ width:100%; height: 100%;}
@@ -18,6 +18,7 @@
     z: <span id="pz"></span><br>
   </p>
   <script src="https://ajax.googleapis.com/ajax/libs/threejs/r69/three.min.js"></script>
+  <script src="scripts/flightControl.js"></script>
   <script>
       var scene = new THREE.Scene();
       var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
@@ -32,68 +33,45 @@
       scene.add( cube );
 
       camera.position.z = 5;
-      var clock =  new THREE.Clock();
+      var clock =  new THREE.Clock(),
+          controls = flightControl();
 
-      var controls = {
-        z:   { pos: false, neg: false },
-        y:   { pos: false, neg: false },
-        x:   { pos: false, neg: false },
-        yaw: { pos: false, neg: false }
-      };
-      var velocities = {
-        z: 0,
-        y: 0,
-        x: 0,
-        decrease: function(t, axis){
-          if(Math.abs(this[axis]) > 0){
-            if(this[axis] < 0){
-              this[axis] += 2*t;
-              if(this[axis] > 0)
-                this[axis] = 0;
-            }else{
-              this[axis] -= 2*t;
-              if(this[axis] < 0)
-                this[axis] = 0;
-            }
-          }
-        }
-      };
 
       var render = function () {
         delta = clock.getDelta()/4;
         requestAnimationFrame( render );
 
         if(controls.x.neg){
-          velocities.x -= delta;
+          controls.velocities.x -= delta;
         }if(controls.x.pos){
-          velocities.x += delta;
+          controls.velocities.x += delta;
         }if(!controls.x.pos && !controls.x.neg){
-          velocities.decrease(delta, 'x');
+          controls.velocities.decrease(delta, 'x');
         }if(controls.y.neg){
-          velocities.y -= delta;
+          controls.velocities.y -= delta;
         }if(controls.y.pos){
-          velocities.y += delta;
+          controls.velocities.y += delta;
         }if(!controls.y.pos && !controls.y.neg){
-          velocities.decrease(delta, 'y');
+          controls.velocities.decrease(delta, 'y');
         }if(controls.z.neg){
-          velocities.z -= delta;
+          controls.velocities.z -= delta;
         }if(controls.z.pos){
-          velocities.z += delta;
+          controls.velocities.z += delta;
         }if(!controls.z.pos && !controls.z.neg){
-          velocities.decrease(delta, 'z');
+          controls.velocities.decrease(delta, 'z');
         }if(controls.yaw.neg){
           cube.rotation.y -= 8*delta;
         }if(controls.yaw.pos){
           cube.rotation.y += 8*delta;
         }
-        cube.translateX(velocities.x);
-        cube.translateY(velocities.y);
-        cube.translateZ(velocities.z);
+        cube.translateX(controls.velocities.x);
+        cube.translateY(controls.velocities.y);
+        cube.translateZ(controls.velocities.z);
 
         // Display velocities on screen
-        document.getElementById('vx').innerHTML = velocities.x;
-        document.getElementById('vy').innerHTML = velocities.y;
-        document.getElementById('vz').innerHTML = velocities.z;
+        document.getElementById('vx').innerHTML = controls.velocities.x;
+        document.getElementById('vy').innerHTML = controls.velocities.y;
+        document.getElementById('vz').innerHTML = controls.velocities.z;
 
         document.getElementById('px').innerHTML = cube.position.x;
         document.getElementById('py').innerHTML = cube.position.y;
@@ -104,38 +82,6 @@
 
       render();
 
-      document.onkeydown = function(evt) {
-          switch(evt.keyCode){
-            case 65: /*A*/ controls.x.neg = true; break;
-            case 68: /*D*/ controls.x.pos = true; break;
-            case 75: /*K*/ controls.y.neg = true; break;
-            case 73: /*I*/ controls.y.pos = true; break;
-            case 87: /*W*/ controls.z.neg = true; break;
-            case 83: /*S*/ controls.z.pos = true; break;
-            case 74: /*J*/ controls.yaw.neg = true; break;
-            case 76: /*L*/ controls.yaw.pos = true; break;
-            case 32: /*space*/ reset(); break;
-          };
-      };
-      document.onkeyup = function(evt) {
-          switch(evt.keyCode){
-            case 65: /*A*/ controls.x.neg = false; break;
-            case 68: /*D*/ controls.x.pos = false; break;
-            case 75: /*K*/ controls.y.neg = false; break;
-            case 73: /*I*/ controls.y.pos = false; break;
-            case 87: /*W*/ controls.z.neg = false; break;
-            case 83: /*S*/ controls.z.pos = false; break;
-            case 74: /*J*/ controls.yaw.neg = false; break;
-            case 76: /*L*/ controls.yaw.pos = false; break;
-          };
-      };
-      function reset(){
-        cube.position.setX(0);
-        cube.position.setY(0);
-        cube.position.setZ(0);
-        cube.rotation.y = 0;
-        velocities.x = velocities.y = velocities.z = 0;
-      }
     </script>
 </body>
 </html>
