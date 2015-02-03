@@ -31,6 +31,7 @@
       scene.add(copter);
 
       camera.position.z = 5;
+      camera.position.y = 2;
       var clock =  new THREE.Clock(),
           controls = flightControl();
 
@@ -65,8 +66,13 @@
 
         // Apply transformations
         copter.translateX(controls.velocities.x);
-        copter.translateY(controls.velocities.y);
         copter.translateZ(controls.velocities.z);
+
+        if(controls.velocities.y + copter.position.y < 0)
+          copter.position.y = 0;
+        else
+          copter.translateY(controls.velocities.y);
+
         for (var i = 0; i < 4; i++) {
           rotors[i].rotation.y += 10*(controls.velocities.z + controls.velocities.y + controls.velocities.x);
         };
