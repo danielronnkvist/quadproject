@@ -49,10 +49,10 @@ function flightControl(){
       };
   };
   function reset(){
-    cube.position.setX(0);
-    cube.position.setY(0);
-    cube.position.setZ(0);
-    cube.rotation.y = 0;
+    copter.position.setX(0);
+    copter.position.setY(0);
+    copter.position.setZ(0);
+    copter.rotation.y = 0;
     temp.velocities.x = temp.velocities.y = temp.velocities.z = 0;
   };
   return temp;
