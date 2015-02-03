@@ -1,25 +1,25 @@
 clear all;
-% position och vinkel i intertial frame
+% position and angle in intertial frame
 pos = zeros(3,1);
 ang = zeros(3,1);
 
-% hastigheten för x, y och z i body frame
+% velocity in x, y and z in body frame
 v = zeros(3,1);
-% vinkelhastigheten i body frame
+% angle velocity in body frame
 angVelo = zeros(3,1);
 
 gravity = 9.82;
 mass = 1;
 thrust = gravity;
-% vinkeln i body frame
+% angle of body frame
 
 ang = [linspace(0,4); linspace(0,10); linspace(0,0)]
 
 for t=1:100
     r = rotationMatrix(ang(:,t));
     r(3,3)
-    %     Ekvation 10 i finska rapporten
-    %     thrust är lyftkraften, det är den vi ska styra
+    % Equation 10 in the finnish report
+    % Thrust is the lifting force, the one we will control
     acc = -gravity*[0,0,1]' + (thrust/mass)*r(:,3);
     accel(:,t) = acc;
     v(:,t) = acc.*t;
