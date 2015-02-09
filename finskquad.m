@@ -43,11 +43,13 @@ acc = zeros(3,1);
 v = zeros(3,1);
 
 % spinning speed of rotors
-rotorAngV = 909*[1;1;1;1];
+hover = 907.6;
+rotorAngV = hover*[1;1;1;1];
 
-for t=1:100
+
+for t=1:2000
     % time step
-    dt = 0.1;
+    dt = 0.001;
     % Calculate linear and angular acceleration for quad
     [accI, acc] = linAcc(gravity, k, mass, angI, rotorAngV, angV, v, vI, Ar );
     [angAccI, angularAcc] = angAcc(b, l, k, Ixx, Iyy, Izz, Ir, rotorAngV, angV, angI);
@@ -72,4 +74,4 @@ for t=1:100
     quadP(:,t) = posI;
 end
 % show quad position over time
-plot3(quadP(1,:),quadP(2,:),quadP(3,:))
+%plot3(quadP(1,:),quadP(2,:),quadP(3,:))
