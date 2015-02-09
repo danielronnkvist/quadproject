@@ -55,9 +55,9 @@ for t=1:2000
     [angAccI, angularAcc] = angAcc(b, l, k, Ixx, Iyy, Izz, Ir, rotorAngV, angV, angI);
     
     % euler steps for velocity and position
-    [vI, posI] = euler(accI,vI,posI,dt);
+    [vI, posI] = eulerStep(accI,vI,posI,dt);
     % euler steps for angle position and angular velocity    
-    [angV, angI] = euler(angularAcc, angV, angI, dt);    
+    [angV, angI] = eulerStep(angularAcc, angV, angI, dt);    
     angI=mod(angI,360); %we only want numbers between 0-360
     
     % we don't want to fall through the earth
