@@ -45,7 +45,7 @@ v = zeros(3,1);
 % spinning speed of rotors
 hover = 907.6;
 rotorAngV = hover*[1;1;1;1];
-
+posI = [0;0;1];
 
 for t=1:2000
     % time step
@@ -55,16 +55,13 @@ for t=1:2000
     [angAccI, angularAcc] = angAcc(b, l, k, Ixx, Iyy, Izz, Ir, rotorAngV, angV, angI);
     
     % euler steps for velocity and position
-    vI = vI + dt*accI;
-    posI = posI + dt*vI;
-    
-    % euler steps for angle position and angular velocity
-    angV = angV + angularAcc*dt;
-    angI = angI+dt*angV;
+    [vI, posI] = euler(accI,vI,posI,dt);
+    % euler steps for angle position and angular velocity    
+    [angV, angI] = euler(angularAcc, angV, angI, dt);    
     angI=mod(angI,360); %we only want numbers between 0-360
     
     % we don't want to fall through the earth
-    if(posI(3) <= 0)
+    if(posI(3) < 0)
         posI(3) = 0;
         vI(3) = 0;
         accI(3) = 0;
@@ -74,4 +71,4 @@ for t=1:2000
     quadP(:,t) = posI;
 end
 % show quad position over time
-%plot3(quadP(1,:),quadP(2,:),quadP(3,:))
+plot3(quadP(1,:),quadP(2,:),quadP(3,:))
