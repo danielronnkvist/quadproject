@@ -85,3 +85,19 @@ function matrixSub(a, b){
 
   return math.matrix(b);
 }
+
+/*
+  Multiply a constant with a matrix
+
+  c is a constant
+  a is a matrix
+*/
+function dotMultiply(a, c){
+  for (var i = a.length - 1; i >= 0; i--) {
+    for (var j = a[0].length - 1; j >= 0; j--) {
+      a[i][j] = c*a[i][j];
+    };
+  };
+
+  return math.matrix(a);
+}
