@@ -71,10 +71,10 @@ function linAcc(angI, rotorAngV, angV, v, vI){
   var G = math.matrix([[0],
                        [0],
                        [-g]]);
-  var rf = rotorForce(k,rotorAngV); // equation 7
-  var acc = 1/m*(transp(R)*G+Tb-cross(aV,m*v));
+  var rf = rotorForce(rotorAngV); // equation 7
+  var acc = 1/m*(matrixSub(matrixAdd(math.multiply(transp(R), G),Tb)-cross(aV,math.multiply(m, v))));
   // equation 10
-  var accI = (G+R*Tb-Ar*vI)/m;
+  var accI = (matrixSub(matrixAdd(G, math.multiply(R, Tb)), math.multiply(Ar, vI)))/m;
 
   return {
     accI: accI,
@@ -106,7 +106,7 @@ function rotationMatrix(rot) {
                     [sum(F)]]);
   }
 */
-function rotorForce(k, rotorAngV){
+function rotorForce(rotorAngV){
   var f = [];
   var sum = 0;
   for(var i = 0; i < rotorAngV.length; i++)
@@ -131,12 +131,12 @@ function newPos(delta){
   var ang = angAcc(rotorAngV, angV, angI);
 
   // euler steps for velocity and position
-  var vI = vI + dt*lin.accI;
-  var posI = posI + dt*vI;
+  var vI = vI + delta*lin.accI;
+  var posI = posI + delta*vI;
 
   // euler steps for angle position and angular velocity
-  var angV = angV + ang.angularAcc*dt;
-  var angI = angI+dt*angV;
+  var angV = angV + ang.angularAcc*delta;
+  var angI = angI+delta*angV;
   var angI= angI % 360; // we only want numbers between 0-360
 
   // we don't want to fall through the earth
