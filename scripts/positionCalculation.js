@@ -59,7 +59,7 @@ function rotorTorque(angV){
 
 }
 
-/*Matrix used to find angular velocities in the inertial fram from 
+/*Matrix used to find angular velocities in the inertial fram from
 body frame*/
 // function [ w ] = ddtinvTransMatrix(angl)
 function ddtinvTransMatrix(angI){
@@ -119,7 +119,7 @@ function angAcc(rotorAngV, angV, angI){
   var angAcc3 = ([[Tb(1)/Ixx],
                   [Tb(2)/Iyy],
                   [TB(3)/Izz]]);
- 
+
  // FIXME - use mathFunctions
  // equation 11
   // var angAcc = angAcc1 - Ir * angAcc2 * wT * angAcc3;
@@ -223,6 +223,32 @@ function rotorForce(rotorAngV){
     t: t
   }
 }
+
+// position, angle, acceleration and velocity in intertial frame
+var accI = math.matrix([[0],
+                        [0],
+                        [0]]);
+var vI = math.matrix([[0],
+                      [0],
+                      [0]]);
+
+// lin-velocity, angular velocity and acceleration in body frame
+var angV = math.matrix([[0],
+                        [0],
+                        [0]]);
+var acc = math.matrix([[0],
+                       [0],
+                       [0]]);
+var v = math.matrix([[0],
+                     [0],
+                     [0]]);
+
+/*
+USER INPUT
+
+hover = 907.6;
+rotorAngV = hover*[1;1;1;1];
+*/
 
 function newPos(delta){
   // Calculate linear and angular acceleration for quad
