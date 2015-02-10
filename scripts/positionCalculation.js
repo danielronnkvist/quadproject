@@ -70,7 +70,7 @@ function ddtinvTransMatrix(angI){
    cy = Math.cos(angI(2));
    ty = Math.tan(ang(2));
 
-   return var w = math.matrix([[0, angI(1)*cs*ty+angI(2)*sx/Math.pow(cy,2), -angI(1)*sx*sy+angI(2)*cy/Math.pow(cy,2)],
+   return math.matrix([[0, angI(1)*cs*ty+angI(2)*sx/Math.pow(cy,2), -angI(1)*sx*sy+angI(2)*cy/Math.pow(cy,2)],
                         [0, -angI(1)*sx, -angI(1)*cx],
                         [0, angI(1)*sx/cy+angI(2)*sx*ty/cy, -angI(1)*sx/cy+angI(2)*cx*ty/cy]]);
 }
@@ -85,20 +85,14 @@ function invTransMatrix(angI){
   cy = Math.cos(angI(2));
   ty = Math.tan(ang(2));
 
-  return var w math.matrix = ([[1, sx*ty, cx*ty],
+  return math.matrix = ([[1, sx*ty, cx*ty],
                               [0, cx, -sx]
                               [0, sx/cy, cx/cy]]);
 }
 
+/*Calculates the angular acceleration in body- and inertial frame */
+// function [ angAccI, angAcc  ] = angAcc(b, l, k, Ixx, Iyy, Izz, Ir, rav, av, a)
 function angAcc(rotorAngV, angV, angI){
-  function [ angAccI, angAcc  ] = angAcc(b, l, k, Ixx, Iyy, Izz, Ir, rav, av, a)
-  //%ANGACC calculate the angular acceleration in bodyframe and inertial frame
-  // % b - drag coefficient
-  // % Ixx,Iyy,Izz - moment of inertia -> global
-  // % Ir - gyroscopic thingie
-  // % rav - rotor angular velocity
-  // % av - angular velocity
-  // % a - angles
 
   var wT = rotorAngV(1)-rotorAngV(2)+rotorAngV(3)-rotorAngV(4);
 
@@ -120,15 +114,13 @@ function angAcc(rotorAngV, angV, angI){
                   [Tb(2)/Iyy],
                   [TB(3)/Izz]]);
  
- // FIXME - use mathFunctions
  // equation 11
-  // var angAcc = angAcc1 - Ir * angAcc2 * wT * angAcc3;
-  var angAcc = matrixSub(angAcc1, Ir) * angAcc2 * dotMultiply(angAcc3, wT);
-
+  // var angAcc = angAcc1 - (Ir * angAcc2 * wT * angAcc3);
+  var angAcc = matrixSub(angAcc1, dotMultiply(math.multiply(angAcc2, dotMultiply(angAcc3, wT)), Ir));
+ 
   // equation 12
-  //FIXME - use mathFunctions
-  // var angAccI = ddtinvTransMatrix(angI)*angV+invTransMatrix(angI)*angAcc;
-  var angAccI = dotMultiply(ddtinvTransMatrix(angI), angV)+invTransMatrix(angI)*angAcc;
+  // var angAccI = ddtinvTransMatrix(angI)*angV + invTransMatrix(angI)*angAcc;
+  var angAccI = matrixAdd(dotMultiply(ddtinvTransMatrix(angI), angV), math.multiply(invTransMatrix(angI), angAcc));
 
   return {
     angAcc: angAcc,
