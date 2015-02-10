@@ -100,17 +100,29 @@ function rotationMatrix(rot) {
 /*
   Calculates the rotor force and returns an object:
   {
-    f: 1,
+    f: [1, 2, 3],
     t: math.matrix([[0],
                     [0],
                     [sum(F)]]);
   }
 */
 function rotorForce(k, rotorAngV){
-  var f = k.*rotorAngV.^2
+  var f = [];
+  var sum = 0;
+  for(var i = 0; i < rotorAngV.length; i++)
+  {
+    var temp = Math.pow(k*rotorAngV[i], 2);
+    f.push(temp);
+    sum += temp;
+  }
   var t = math.matrix([[0],
                        [0],
-                       []]);
+                       [sum]]);
+
+  return {
+    f: f,
+    t: t
+  }
 }
 
 function newPos(delta){
