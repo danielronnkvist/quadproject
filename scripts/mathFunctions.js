@@ -101,3 +101,16 @@ function dotMultiply(a, c){
 
   return math.matrix(a);
 }
+
+/*
+  Modulus for matrices
+*/
+function modMat(a, mod){
+  for (var i = 0; i < a.length; i++) {
+    for (var j = 0; j < a[0].length; j++) {
+      a[i][j] = a[i][j] % mod;
+    };
+  };
+
+  return math.matrix(a);
+}
