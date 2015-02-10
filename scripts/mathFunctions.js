@@ -1,9 +1,9 @@
 function validateDimensions(a, b){
-  var ax = a.length;
-  var ay = a[0].length;
+  var ax = a._data.length;
+  var ay = a._data[0].length;
 
-  var bx = b.length;
-  var by = b[0].length;
+  var bx = b._data.length;
+  var by = b._data[0].length;
 
   if(ax != bx || ay != by)
     return true; // Dimensions do not agree
@@ -27,14 +27,14 @@ function cross(a, b){
   TRANSP
 */
 function transp(a){
-  var ax = a[0].length;
-  var ay = a.length;
+  var ax = a._data[0].length;
+  var ay = a._data.length;
 
   var b = [];
   for(var x = 0; x < ax; x++){
     var temp = [];
     for(var y = 0; y < ay; y++){
-      temp.push(a[y][x])
+      temp.push(a._data[y][x])
     }
     b.push(temp);
   }
@@ -49,19 +49,19 @@ function matrixAdd(a, b){
   if(validateDimensions(a,b))
     return; // Dimensions do not agree
 
-  var ax = a[0].length;
-  var ay = a.length;
+  var ax = a._data[0].length;
+  var ay = a._data.length;
 
-  var b = [];
+  var c = [];
   for(var y = 0; y < ay; y++){
     var temp = [];
     for(var x = 0; x < ax; x++){
-      temp.push(a[y][x] + b[y][x]);
+      temp.push(a._data[y][x] + b._data[y][x]);
     }
-    b.push(temp);
+    c.push(temp);
   }
 
-  return math.matrix(b);
+  return math.matrix(c);
 }
 
 /*
@@ -71,19 +71,19 @@ function matrixSub(a, b){
   if(validateDimensions(a,b))
     return; // Dimensions do not agree
 
-  var ax = a[0].length;
-  var ay = a.length;
+  var ax = a._data[0].length;
+  var ay = a._data.length;
 
-  var b = [];
+  var c = [];
   for(var y = 0; y < ay; y++){
     var temp = [];
     for(var x = 0; x < ax; x++){
-      temp.push(a[y][x] - b[y][x]);
+      temp.push(a._data[y][x] - b._data[y][x]);
     }
-    b.push(temp);
+    c.push(temp);
   }
 
-  return math.matrix(b);
+  return math.matrix(c);
 }
 
 /*
@@ -93,24 +93,26 @@ function matrixSub(a, b){
   a is a matrix
 */
 function dotMultiply(a, c){
-  for (var i = a.length - 1; i >= 0; i--) {
-    for (var j = a[0].length - 1; j >= 0; j--) {
-      a[i][j] = c*a[i][j];
+  var temp = [];
+  for (var i = a._data.length - 1; i >= 0; i--) {
+    for (var j = a._data[0].length - 1; j >= 0; j--) {
+      temp.push(c*a._data[i][j]);
     };
   };
 
-  return math.matrix(a);
+  return math.matrix(temp);
 }
 
 /*
   Modulus for matrices
 */
 function modMat(a, mod){
-  for (var i = 0; i < a.length; i++) {
-    for (var j = 0; j < a[0].length; j++) {
-      a[i][j] = a[i][j] % mod;
+  var temp = [];
+  for (var i = 0; i < a._data.length; i++) {
+    for (var j = 0; j < a._data[0].length; j++) {
+      temp.push(a._data[i][j] % mod);
     };
   };
 
-  return math.matrix(a);
+  return math.matrix(temp);
 }

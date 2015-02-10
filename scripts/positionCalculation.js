@@ -59,7 +59,7 @@ function rotorTorque(angV){
 
 }
 
-/*Matrix used to find angular velocities in the inertial fram from 
+/*Matrix used to find angular velocities in the inertial fram from
 body frame*/
 // function [ w ] = ddtinvTransMatrix(angl)
 function ddtinvTransMatrix(angI){
@@ -113,7 +113,7 @@ function angAcc(rotorAngV, angV, angI){
   var angAcc3 = ([[Tb(1)/Ixx],
                   [Tb(2)/Iyy],
                   [TB(3)/Izz]]);
- 
+
  // equation 11
   // var angAcc = angAcc1 - (Ir * angAcc2 * wT * angAcc3);
   var angAcc = matrixSub(angAcc1, dotMultiply(math.multiply(angAcc2, dotMultiply(angAcc3, wT)), Ir));
@@ -156,9 +156,16 @@ function linAcc(angI, rotorAngV, angV, v, vI){
                        [0],
                        [-g]]);
   var rf = rotorForce(rotorAngV); // equation 7
-  var acc = dotMultiply((matrixSub(matrixAdd(math.multiply(transp(R), G),rf.t),cross(aV,math.multiply(m, v)))), (1/m));
+
+  var rg = math.multiply(transp(R), G);
+  var rgt = matrixAdd(rg,rf.t);
+  var aVmv = cross(aV,math.multiply(m, v));
+  var acc = dotMultiply((matrixSub(rgt, aVmv)), 1/m);
+
   // equation 10
-  var accI = dotMultiply((matrixSub(matrixAdd(G, math.multiply(R, rf.t)), math.multiply(Ar, vI))), (1/m));
+  var rt = math.multiply(R, rf.t);
+  var grtArvI = matrixSub(matrixAdd(G, rt), math.multiply(Ar, vI));
+  var accI = dotMultiply(grtArvI, 1/m);
 
   return {
     accI: accI,
@@ -208,6 +215,32 @@ function rotorForce(rotorAngV){
     t: t
   }
 }
+
+// position, angle, acceleration and velocity in intertial frame
+var accI = math.matrix([[0],
+                        [0],
+                        [0]]);
+var vI = math.matrix([[0],
+                      [0],
+                      [0]]);
+
+// lin-velocity, angular velocity and acceleration in body frame
+var angV = math.matrix([[0],
+                        [0],
+                        [0]]);
+var acc = math.matrix([[0],
+                       [0],
+                       [0]]);
+var v = math.matrix([[0],
+                     [0],
+                     [0]]);
+
+/*
+USER INPUT
+
+hover = 907.6;
+rotorAngV = hover*[1;1;1;1];
+*/
 
 function newPos(delta){
   // Calculate linear and angular acceleration for quad
