@@ -1,27 +1,35 @@
+/*
+  CONSTANTS
+*/
+
 // gravity
-gravity = 9.82;
+var gravity = 9.82;
 // mass
-mass = 0.46;
+var mass = 0.46;
 // inertia
-Ixx = 4.856e-3;
-Iyy = Ixx;
-Izz = 8.801e-3;
-inertiaM = math.matrix([[Ixx, 0, 0],
-                        [0, Iyy, 0],
-                        [0, 0, Izz]]);
+var Ixx = 4.856e-3;
+var Iyy = Ixx;
+var Izz = 8.801e-3;
+var inertiaM = math.matrix([[Ixx, 0, 0],
+                            [0, Iyy, 0],
+                            [0, 0, Izz]]);
 
 // lift constant
-radius = 0.2;
-k = 2.98e-6;
+var radius = 0.2;
+var k = 2.98e-6;
 // drag contant
-b = 1.14e-7;
+var b = 1.14e-7;
 // arm length on quad
-l = 0.225;
+var l = 0.225;
 // FIXME what is this?
-Ir = 1;
+var Ir = 1;
 // Air resistance
-A = 0.25;
-Ar = math.multiply(math.eye(3), A);
+var A = 0.25;
+var Ar = math.multiply(math.eye(3), A);
+
+/*
+  FUNCTIONS
+*/
 
 /*
 calculate the angular acceleration
@@ -40,6 +48,18 @@ function angAcc(rotorAngV, angV, angI){
 /*
 calculate the linear acceleration
 
+variables:
+  Linear Velocity for quad
+  g - gravity
+  k - lift contant
+  mass - mass
+  angI - euler angles
+  rotorAngV - rotors' angular velocity
+  aV - angular velocity in body frame
+  v - velocity in body frame
+  vI - velocity in body inertia frame
+  Ar - Air resistance
+
 returns an object like this:
 {
   accI: 123,
@@ -47,22 +67,65 @@ returns an object like this:
 }
 */
 function linAcc(angI, rotorAngV, angV, v, vI){
+  var R = rotationMatrix(angI);
+  var G = math.matrix([[0],
+                       [0],
+                       [-g]]);
+  var rf = rotorForce(k,rotorAngV); // equation 7
+  var acc = 1/m*(transp(R)*G+Tb-cross(aV,m*v));
+  // equation 10
+  var accI = (G+R*Tb-Ar*vI)/m;
 
+  return {
+    accI: accI,
+    acc: acc
+  };
+}
+
+// Creates the rotational matrix
+// Returns a matrix
+function rotationMatrix(rot) {
+  var cx = math.cos(rot[0]);
+  var cy = math.cos(rot[1]);
+  var cz = math.cos(rot[2]);
+  var sx = math.sin(rot[0]);
+  var sy = math.sin(rot[1]);
+  var sz = math.sin(rot[2]);
+
+  return math.matrix([[cz*cy, cz*sy*sx-sz*cx, cz*sy*cx+sz*sx],
+                      [sz*cy, sz*sy*sx+cz*cx, sz*sy*cx-cz*sx],
+                      [-sy,   cy*sx,          cy*cx]]);
+}
+
+/*
+  Calculates the rotor force and returns an object:
+  {
+    f: 1,
+    t: math.matrix([[0],
+                    [0],
+                    [sum(F)]]);
+  }
+*/
+function rotorForce(k, rotorAngV){
+  var f = k.*rotorAngV.^2
+  var t = math.matrix([[0],
+                       [0],
+                       []]);
 }
 
 function newPos(delta){
   // Calculate linear and angular acceleration for quad
-  lin = linAcc(angI, rotorAngV, angV, v, vI );
-  ang = angAcc(rotorAngV, angV, angI);
+  var lin = linAcc(angI, rotorAngV, angV, v, vI );
+  var ang = angAcc(rotorAngV, angV, angI);
 
   // euler steps for velocity and position
-  vI = vI + dt*lin.accI;
-  posI = posI + dt*vI;
+  var vI = vI + dt*lin.accI;
+  var posI = posI + dt*vI;
 
   // euler steps for angle position and angular velocity
-  angV = angV + ang.angularAcc*dt;
-  angI = angI+dt*angV;
-  angI= angI % 360; // we only want numbers between 0-360
+  var angV = angV + ang.angularAcc*dt;
+  var angI = angI+dt*angV;
+  var angI= angI % 360; // we only want numbers between 0-360
 
   // we don't want to fall through the earth
   if(posI[3] <= 0)
