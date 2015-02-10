@@ -40,8 +40,100 @@ returns an object like this:
   angularAcc: 456
 }
 */
-function angAcc(rotorAngV, angV, angI){
+/*Calculates the torque of the rotor individual motors aswell as the torque
+the body is effected of: b is drag, l is the distanxe from center to rotors
+and k is the lift contant. angV is the angual velocities*/
 
+//function [ Tb, Tm ] = rotorTorque( b, l, k, angV)
+function rotorTorque(angV){
+
+  var tm = Math.pow(b*angV, 2); //should also have +Im*wdot but us omitted. Im = 3.357e-5
+  var tb = math.matrix([[ l*k*Math.pow(-angV(2), 2) + Math.pow(angV(4),2)],
+                        [ l*k*Math.pow(-angV(1), 2) + Math.pow(angV(3),2)],
+                        [Tm(1)-Tm(2)+TM(3)-Tm(4)]]);
+
+  return {
+    tb: tb,
+    tm: tm
+  };
+
+}
+
+/*Matrix used to find angular velocities in the inertial fram from 
+body frame*/
+// function [ w ] = ddtinvTransMatrix(angl)
+function ddtinvTransMatrix(angI){
+
+   // etadot = inv(W_eta)*nu
+   sx = Math.sin(angI(1));
+   cx = Math.cos(angI(1));
+   cy = Math.cos(angI(2));
+   ty = Math.tan(ang(2));
+
+   return var w = math.matrix([[0, angI(1)*cs*ty+angI(2)*sx/Math.pow(cy,2), -angI(1)*sx*sy+angI(2)*cy/Math.pow(cy,2)],
+                        [0, -angI(1)*sx, -angI(1)*cx],
+                        [0, angI(1)*sx/cy+angI(2)*sx*ty/cy, -angI(1)*sx/cy+angI(2)*cx*ty/cy]]);
+}
+
+/*MAtrix used to find the angular velocities in the inertial fram from body*/
+// function [ w ] = invTransMatrix(angl)
+function invTransMatrix(angI){
+
+  // % etadot = inv(W_eta)*nu
+  sx = Math.sin(angI(1));
+  cx = Math.cos(angI(1));
+  cy = Math.cos(angI(2));
+  ty = Math.tan(ang(2));
+
+  return var w math.matrix = ([[1, sx*ty, cx*ty],
+                              [0, cx, -sx]
+                              [0, sx/cy, cx/cy]]);
+}
+
+function angAcc(rotorAngV, angV, angI){
+  function [ angAccI, angAcc  ] = angAcc(b, l, k, Ixx, Iyy, Izz, Ir, rav, av, a)
+  //%ANGACC calculate the angular acceleration in bodyframe and inertial frame
+  // % b - drag coefficient
+  // % Ixx,Iyy,Izz - moment of inertia -> global
+  // % Ir - gyroscopic thingie
+  // % rav - rotor angular velocity
+  // % av - angular velocity
+  // % a - angles
+
+  var wT = rotorAngV(1)-rotorAngV(2)+rotorAngV(3)-rotorAngV(4);
+
+   // [Tb, Tm ] = rotorTorque( b, l, k, rav);
+  var rTorque = rotorTorque(angV);
+  var tb = rTorque.tb;
+  var tm = rTorque.tm;
+
+  // FIXME - change var names
+  var angAcc1 = math.matrix([[((Iyy-Izz)*angV(2)*angV(3))/Ixx],
+                            [((Izz-Ixx)*angV(1)*angV(3))/Iyy],
+                            [((Ixx-Iyy)*angV(1)*angV(2))/Izz]]);
+
+  var angAcc2 = ([[angV(2)/Ixx],
+                  [-angV(1)/Iyy],
+                  [0]]);
+
+  var angAcc3 = ([[Tb(1)/Ixx],
+                  [Tb(2)/Iyy],
+                  [TB(3)/Izz]]);
+ 
+ // FIXME - use mathFunctions
+ // equation 11
+  // var angAcc = angAcc1 - Ir * angAcc2 * wT * angAcc3;
+  var angAcc = matrixSub(angAcc1, Ir) * angAcc2 * dotMultiply(angAcc3, wT);
+
+  // equation 12
+  //FIXME - use mathFunctions
+  // var angAccI = ddtinvTransMatrix(angI)*angV+invTransMatrix(angI)*angAcc;
+  var angAccI = dotMultiply(ddtinvTransMatrix(angI), angV)+invTransMatrix(angI)*angAcc;
+
+  return {
+    angAcc: angAcc,
+    angAccI: angAccI
+  };
 }
 
 
