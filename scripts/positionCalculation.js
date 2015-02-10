@@ -72,9 +72,16 @@ function linAcc(angI, rotorAngV, angV, v, vI){
                        [0],
                        [-g]]);
   var rf = rotorForce(rotorAngV); // equation 7
-  var acc = dotMultiply((matrixSub(matrixAdd(math.multiply(transp(R), G),rf.t),cross(aV,math.multiply(m, v)))), (1/m));
+
+  var rg = math.multiply(transp(R), G);
+  var rgt = matrixAdd(rg,rf.t);
+  var aVmv = cross(aV,math.multiply(m, v));
+  var acc = dotMultiply((matrixSub(rgt, aVmv)), 1/m);
+
   // equation 10
-  var accI = dotMultiply((matrixSub(matrixAdd(G, math.multiply(R, rf.t)), math.multiply(Ar, vI))), (1/m));
+  var rt = math.multiply(R, rf.t);
+  var grtArvI = matrixSub(matrixAdd(G, rt), math.multiply(Ar, vI));
+  var accI = dotMultiply(grtArvI, 1/m);
 
   return {
     accI: accI,
