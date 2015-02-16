@@ -18,9 +18,9 @@ function cross(a, b){
   if(validateDimensions(a,b))
     return; // Dimensions do not agree
 
-  return math.matrix([[a[1]*b[2]-a[2]*b[1]],
-                      [a[2]*b[0]-a[0]*b[2]],
-                      [a[0]*b[1]-a[2]*b[0]]]);
+  return math.matrix([[a._data[1]*b._data[2]-a._data[2]*b._data[1]],
+                      [a._data[2]*b._data[0]-a._data[0]*b._data[2]],
+                      [a._data[0]*b._data[1]-a._data[2]*b._data[0]]]);
 }
 
 /*
@@ -95,9 +95,11 @@ function matrixSub(a, b){
 function dotMultiply(a, c){
   var temp = [];
   for (var i = a._data.length - 1; i >= 0; i--) {
+    var t = []
     for (var j = a._data[0].length - 1; j >= 0; j--) {
-      temp.push(c*a._data[i][j]);
+      t.push([c*a._data[i][j]]);
     };
+    temp.push(t);
   };
 
   return math.matrix(temp);
@@ -109,9 +111,11 @@ function dotMultiply(a, c){
 function modMat(a, mod){
   var temp = [];
   for (var i = 0; i < a._data.length; i++) {
+    var t = [];
     for (var j = 0; j < a._data[0].length; j++) {
-      temp.push(a._data[i][j] % mod);
+      t.push([a._data[i][j] % mod]);
     };
+    temp.push(t);
   };
 
   return math.matrix(temp);
