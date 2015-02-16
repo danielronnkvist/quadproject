@@ -86,10 +86,10 @@ function flightControl(){
       temp.rotors.r3 += delta;
       temp.rotors.r4 += delta;
     }if(temp.z.pos){ // going down, key S
-      temp.rotors.r1 += delta;
-      temp.rotors.r2 += delta;
-      temp.rotors.r3 += delta;
-      temp.rotors.r4 += delta;
+      temp.rotors.r1 -= delta;
+      temp.rotors.r2 -= delta;
+      temp.rotors.r3 -= delta;
+      temp.rotors.r4 -= delta;
     }if(temp.yaw.neg){ // yawing clockwise key L
       temp.rotors.r1 += delta;
       temp.rotors.r4 += delta;
