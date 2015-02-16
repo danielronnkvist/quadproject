@@ -242,8 +242,10 @@ hover = 907.6;
 rotorAngV = hover*[1;1;1;1];
 */
 
-function newPos(delta){
+function newPos(delta, rotorAngV){
   // Calculate linear and angular acceleration for quad
+  console.log(rotorAngV);
+  
   var lin = linAcc(angI, rotorAngV, angV, v, vI );
   var ang = angAcc(rotorAngV, angV, angI);
 

@@ -24,6 +24,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/threejs/r69/three.min.js"></script>
   <script src="http://cdnjs.cloudflare.com/ajax/libs/mathjs/1.2.0/math.min.js"></script>
   <script src="scripts/mathFunctions.js"></script>
+  <script src="scripts/positionCalculation.js"></script>
   <script src="scripts/flightControl.js"></script>
   <script src="scripts/geometry.js"></script>
   <script>
@@ -40,6 +41,7 @@
     camera.position.y = 2;
     var clock =  new THREE.Clock(),
         controls = flightControl();
+        // copterPosition = positionCalculation();
 
 
     var render = function () {
@@ -48,21 +50,30 @@
 
       // Update velocities and rotations
       controls.update(delta);
+      console.log('The rotor', controls.rotors);
+      // console.log(THREE.Mesh); 
 
       // Apply transformations
-      copter.translateX(controls.velocities.x);
-      copter.translateZ(controls.velocities.z);
+      // copter.translateX(controls.velocities.x);
+      // copter.translateZ(controls.velocities.z);
 
-      if(controls.velocities.y + copter.position.y < 0)
-        copter.position.y = 0;
-      else
-        copter.translateY(controls.velocities.y);
+      //Use this late, FIXME
 
-      for (var i = 0; i < 4; i++) {
-        rotors[i].rotation.y += 2*(Math.cos(controls.velocities.z) + Math.cos(controls.velocities.y) + Math.cos(controls.velocities.x));
-      };
-      copter.rotation.z = -controls.velocities.x;
-      copter.rotation.x = controls.velocities.z;
+      // copter.translate3d(newPos(delta, rotors));
+      
+      // copter.translateX(controls.rotors);
+      // copter.translateZ(controls.velocities.z);
+
+      // if(controls.velocities.y + copter.position.y < 0)
+      //   copter.position.y = 0;
+      // else
+      //   copter.translateY(controls.velocities.y);
+
+      // for (var i = 0; i < 4; i++) {
+      //   rotors[i].rotation.y += 2*(Math.cos(controls.velocities.z) + Math.cos(controls.velocities.y) + Math.cos(controls.velocities.x));
+      // };
+      // copter.rotation.z = -controls.velocities.x;
+      // copter.rotation.x = controls.velocities.z;
 
 
       // Display velocities on screen
