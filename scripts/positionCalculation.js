@@ -92,6 +92,8 @@ function invTransMatrix(angI){
                       [0, sx/cy, cx/cy]]);
 }
 
+/*Calculates the angular acceleration in body- and inertial frame */
+// function [ angAccI, angAcc  ] = angAcc(b, l, k, Ixx, Iyy, Izz, Ir, rav, av, a)
 function angAcc(rotorAngV, angV, angI){
   // function [ angAccI, angAcc  ] = angAcc(b, l, k, Ixx, Iyy, Izz, Ir, rav, av, a)
   //%ANGACC calculate the angular acceleration in bodyframe and inertial frame
