@@ -37,15 +37,12 @@
 
     scene.add(copter);
 
+    camera.up.set( 0, 0, 1 );
     camera.position.z = 5;
     camera.position.y = 2;
     var clock =  new THREE.Clock(),
-        controls = flightControl();
-        // copterPosition = positionCalculation();
-
-    hover = 907.6;
-    rotorAngV = dotMultiply(math.matrix([[1],[1],[1],[1]]), hover);
-    console.log(newPos(1));
+        controls = flightControl(),
+        rotorAngV;
 
     var render = function () {
       delta = clock.getDelta()/4;
@@ -53,24 +50,29 @@
 
       // Update velocities and rotations
       controls.update(delta);
-      console.log('The rotor', controls.rotors);
-      // console.log(THREE.Mesh); 
+      // console.log('The rotor', controls.rotors);
+      // console.log(THREE.Mesh);
 
       // Apply transformations
       // copter.translateX(controls.velocities.x);
       // copter.translateZ(controls.velocities.z);
 
       //Use this late, FIXME
+      console.log(controls.rotors.r1)
+      rotorAngV = dotMultiply(math.matrix([[controls.rotors.r1],
+                                           [controls.rotors.r2],
+                                           [controls.rotors.r3],
+                                           [controls.rotors.r4]]), controls.hover);
+      // console.log(rotorAngV)
+      // copter.translate3d(newPos(delta));
+      var pos = newPos(delta);
+      copter.translateX(pos._data[0]);
+      copter.translateZ(pos._data[2]);
 
-      // copter.translate3d(newPos(delta, rotors));
-      
-      // copter.translateX(controls.rotors);
-      // copter.translateZ(controls.velocities.z);
-
-      // if(controls.velocities.y + copter.position.y < 0)
-      //   copter.position.y = 0;
-      // else
-      //   copter.translateY(controls.velocities.y);
+      if(pos._data[1] + copter.position.y < 0)
+        copter.position.y = 0;
+      else
+        copter.translateY(pos._data[1]);
 
       // for (var i = 0; i < 4; i++) {
       //   rotors[i].rotation.y += 2*(Math.cos(controls.velocities.z) + Math.cos(controls.velocities.y) + Math.cos(controls.velocities.x));
@@ -88,9 +90,9 @@
       document.getElementById('py').innerHTML = copter.position.y;
       document.getElementById('pz').innerHTML = copter.position.z;
 
-      document.getElementById('rotx').innerHTML = copter.rotation.x * 57,296;
-      document.getElementById('roty').innerHTML = copter.rotation.y * 57,296;
-      document.getElementById('rotz').innerHTML = copter.rotation.z * 57,296;
+      document.getElementById('rotx').innerHTML = copter.rotation.x * 57.296;
+      document.getElementById('roty').innerHTML = copter.rotation.y * 57.296;
+      document.getElementById('rotz').innerHTML = copter.rotation.z * 57.296;
 
       renderer.render(scene, camera);
     };

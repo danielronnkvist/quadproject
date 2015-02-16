@@ -295,7 +295,7 @@ function newPos(delta){
                       [accI._data[2][0]*delta]]);
   vI = matrixAdd(vI, temp);
 
-  console.log(temp)
+  // console.log(temp)
   temp = math.matrix([[vI._data[0]*delta],
                       [vI._data[1]*delta],
                       [vI._data[2]*delta]]);
@@ -303,12 +303,21 @@ function newPos(delta){
   posI = matrixAdd(posI, temp);
 
   // euler steps for angle position and angular velocity
-  temp = dotMultiply(ang.angAcc, delta);
+  // temp = dotMultiply(ang.angAcc, delta);
+  temp = math.matrix([[ang.angAcc._data[0]*delta],
+                      [ang.angAcc._data[1]*delta],
+                      [ang.angAcc._data[2]*delta]]);
   angV = matrixAdd(angV, temp);
 
-  temp = dotMultiply(angV, delta);
+  // temp = dotMultiply(angV, delta);
+  temp = math.matrix([[angV._data[0]*delta],
+                      [angV._data[1]*delta],
+                      [angV._data[2]*delta]]);
   angI = matrixAdd(angI, temp);
-  angI = modMat(angI, 360); // we only want numbers between 0-360
+  angI = math.matrix([[angI._data[0]%360],
+                      [angI._data[1]%360],
+                      [angI._data[2]%360]]);
+  // angI = modMat(angI, 360); // we only want numbers between 0-360
 
   // we don't want to fall through the earth
   if(posI[3] <= 0)
