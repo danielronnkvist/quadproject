@@ -242,6 +242,19 @@ function rotorForce(rotorAngV){
   }
 }
 
+// Getting variables from functions PD and thrustPD in thrustPD.js
+// function PD:gravity, mass, Ixx, Iyy, Izz, vDesired, vActual, posDesired, posActual, anglesActual, anglesDesired, angVelActual, angVelDesired
+var pdVar = PD(gravity, mass, Ixx, Iyy, Izz, [0,0,0], vI, [0,0,2], posI, angI, [0,0,0], angV, [0,0,0]);
+
+var torqX = pdVar.torqX;
+var torqY = pdVar.torqY; 
+var torqZ = pdVar.torqZ;
+var thrust = pdVar.thrust;  
+
+// Stabilizing copter with PD feedback
+rotorAngV = thrustPD( torqX, torqY,torqZ, thrust, k ,l, b);
+
+
 // acceleration and velocity in intertial frame
 var accI = math.matrix([[0],
                         [0],
