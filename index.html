@@ -58,21 +58,22 @@
       // copter.translateZ(controls.velocities.z);
 
       //Use this late, FIXME
-      console.log(controls.rotors.r1)
-      rotorAngV = dotMultiply(math.matrix([[controls.rotors.r1],
-                                           [controls.rotors.r2],
-                                           [controls.rotors.r3],
-                                           [controls.rotors.r4]]), controls.hover);
+      rotorAngV = math.matrix([[controls.rotors.r1*controls.hover],
+                               [controls.rotors.r2*controls.hover],
+                               [controls.rotors.r3*controls.hover],
+                               [controls.rotors.r4*controls.hover]]);
+      console.log(rotorAngV._data[0][0], rotorAngV._data[1][0], rotorAngV._data[2][0], rotorAngV._data[3][0])
       // console.log(rotorAngV)
       // copter.translate3d(newPos(delta));
       var pos = newPos(delta);
-      copter.translateX(pos._data[0]);
-      copter.translateZ(pos._data[2]);
+      console.log(pos._data[0][0], pos._data[1][0], pos._data[2][0])
+      copter.translateX(pos._data[0][0]);
+      copter.translateZ(pos._data[1][0]);
 
-      if(pos._data[1] + copter.position.y < 0)
+      if(pos._data[2][0] + copter.position.y < 0)
         copter.position.y = 0;
       else
-        copter.translateY(pos._data[1]);
+        copter.translateY(pos._data[2][0]);
 
       // for (var i = 0; i < 4; i++) {
       //   rotors[i].rotation.y += 2*(Math.cos(controls.velocities.z) + Math.cos(controls.velocities.y) + Math.cos(controls.velocities.x));

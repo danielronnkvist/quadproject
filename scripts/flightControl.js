@@ -76,9 +76,9 @@ function flightControl(){
       r1Move = true;
       r3Move = true;
     }if(temp.y.neg){
-      temp.hover -= delta;
+      temp.hover -= 1000*delta;
     }if(temp.y.pos){ // going forwards key I
-      temp.hover += delta;
+      temp.hover += 1000*delta;
     }if(temp.z.neg){ // going up, key W
       temp.rotors.r3 += delta;
       temp.rotors.r4 += delta;

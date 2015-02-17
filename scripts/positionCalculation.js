@@ -27,6 +27,26 @@ var Ir = 1;
 var A = 0.25;
 var Ar = dotMultiply(math.eye(3), A);
 
+// acceleration and velocity in intertial frame
+var accI = math.matrix([[0],
+                        [0],
+                        [0]]);
+var vI = math.matrix([[0],
+                      [0],
+                      [0]]);
+
+// lin-velocity, angular velocity and acceleration in body frame
+var angV = math.matrix([[0],
+                        [0],
+                        [0]]);
+console.log(angV)
+var acc = math.matrix([[0],
+                       [0],
+                       [0]]);
+var v = math.matrix([[0],
+                     [0],
+                     [0]]);
+
 /*
   FUNCTIONS
 */
@@ -52,7 +72,7 @@ function rotorTorque(){
   }
   var tb = math.matrix([[ l*k*Math.pow(-rotorAngV._data[1][0], 2) + Math.pow(rotorAngV._data[3][0],2)],
                         [ l*k*Math.pow(-rotorAngV._data[0][0], 2) + Math.pow(rotorAngV._data[2][0],2)],
-                        [tm[0]-tm[1]+tm[2]-tm[3]]]);
+                        [-tm[0]+tm[1]-tm[2]+tm[3]]]);
 
   return {
     tb: tb,
@@ -94,7 +114,7 @@ function invTransMatrix(angI){
 
 /*Calculates the angular acceleration in body- and inertial frame */
 // function [ angAccI, angAcc  ] = angAcc(b, l, k, Ixx, Iyy, Izz, Ir, rav, av, a)
-function angAcc(rotorAngV, angV, angI){
+function angAcc(rotorAngV, angI){
   // function [ angAccI, angAcc  ] = angAcc(b, l, k, Ixx, Iyy, Izz, Ir, rav, av, a)
   //%ANGACC calculate the angular acceleration in bodyframe and inertial frame
   // % b - drag coefficient
@@ -117,7 +137,7 @@ function angAcc(rotorAngV, angV, angI){
   var angAcc1 = math.matrix([[((Iyy-Izz)*angV._data[1][0]*angV._data[2][0])/Ixx],
                              [((Izz-Ixx)*angV._data[0][0]*angV._data[2][0])/Iyy],
                              [((Ixx-Iyy)*angV._data[0][0]*angV._data[1][0])/Izz]]);
-
+  console.log(angV)
   var angAcc2 = math.matrix([[(-Ir * angV._data[1][0] * wT)/Ixx],
                              [(-Ir * (-angV._data[0][0]) * wT)/Iyy],
                              [0]]);
@@ -135,9 +155,9 @@ function angAcc(rotorAngV, angV, angI){
   //FIXME - use mathFunctions
   // var angAccI = ddtinvTransMatrix(angI)*angV+invTransMatrix(angI)*angAcc;
   var angIV = math.multiply(ddtinvTransMatrix(angI), angV);
-  var angIAc = math.matrix([[invTransMatrix(angI)._data[0][0]*angAcc._data[0] + invTransMatrix(angI)._data[0][1]*angAcc._data[1] +  invTransMatrix(angI)._data[0][2]*angAcc._data[2]],
-                            [invTransMatrix(angI)._data[1][0]*angAcc._data[0] + invTransMatrix(angI)._data[1][1]*angAcc._data[1] +  invTransMatrix(angI)._data[1][2]*angAcc._data[2]],
-                            [invTransMatrix(angI)._data[2][0]*angAcc._data[0] + invTransMatrix(angI)._data[2][1]*angAcc._data[1] +  invTransMatrix(angI)._data[2][2]*angAcc._data[2]]]);
+  var angIAc = math.matrix([[invTransMatrix(angI)._data[0][0]*angAcc._data[0][0] + invTransMatrix(angI)._data[0][1]*angAcc._data[1][0] +  invTransMatrix(angI)._data[0][2]*angAcc._data[2][0]],
+                            [invTransMatrix(angI)._data[1][0]*angAcc._data[0][0] + invTransMatrix(angI)._data[1][1]*angAcc._data[1][0] +  invTransMatrix(angI)._data[1][2]*angAcc._data[2][0]],
+                            [invTransMatrix(angI)._data[2][0]*angAcc._data[0][0] + invTransMatrix(angI)._data[2][1]*angAcc._data[1][0] +  invTransMatrix(angI)._data[2][2]*angAcc._data[2][0]]]);
   var angAccI = matrixAdd(angIV, angIAc);
 
   return {
@@ -168,7 +188,7 @@ returns an object like this:
   acc: 456
 }
 */
-function linAcc(angI, rotorAngV, angV, v){
+function linAcc(angI, rotorAngV, v){
   var R = rotationMatrix(angI);
   var G = math.matrix([[0],
                        [0],
@@ -177,7 +197,8 @@ function linAcc(angI, rotorAngV, angV, v){
 
   var rg = math.multiply(transp(R), G);
   var rgt = matrixAdd(rg,rf.t);
-  var aVmv = cross(angV, math.dotMultiply(v, mass));
+  // console.log(angV)
+  var aVmv = cross(angV, dotMultiply(v, mass));
   var acc = dotMultiply((matrixSub(rgt, aVmv)), 1/mass);
 
   // equation 10
@@ -227,7 +248,7 @@ function rotorForce(rotorAngV){
   var sum = 0;
   for(var i = 0; i < rotorAngV._data.length; i++)
   {
-    var temp = Math.pow(k*rotorAngV._data[i], 2);
+    var temp = Math.pow(k*rotorAngV._data[i][0], 2);
     f.push([temp]);
     sum += temp;
   }
@@ -242,35 +263,16 @@ function rotorForce(rotorAngV){
   }
 }
 
-// acceleration and velocity in intertial frame
-var accI = math.matrix([[0],
-                        [0],
-                        [0]]);
-var vI = math.matrix([[0],
-                      [0],
-                      [0]]);
-
-// lin-velocity, angular velocity and acceleration in body frame
-var angV = math.matrix([[0],
-                        [0],
-                        [0]]);
-var acc = math.matrix([[0],
-                       [0],
-                       [0]]);
-var v = math.matrix([[0],
-                     [0],
-                     [0]]);
-
 function copterPosition(){
   return math.matrix([[copter.position.x],
-                      [copter.position.y],
-                      [copter.position.z]]);
+                      [copter.position.z],
+                      [copter.position.y]]);
 }
 
 function copterRotation(){
   return math.matrix([[copter.rotation.x],
-                      [copter.rotation.y],
-                      [copter.rotation.z]]);
+                      [copter.rotation.z],
+                      [copter.rotation.y]]);
 }
 
 /*
@@ -285,8 +287,8 @@ function newPos(delta){
   posI = copterPosition();
   angI = copterRotation();
   // Calculate linear and angular acceleration for quad
-  lin = linAcc(angI, rotorAngV, angV, v);
-  ang = angAcc(rotorAngV, angV, angI);
+  lin = linAcc(angI, rotorAngV, v);
+  ang = angAcc(rotorAngV, angI);
 
   // euler steps for velocity and position
   accI = lin.accI;
@@ -320,12 +322,15 @@ function newPos(delta){
   // angI = modMat(angI, 360); // we only want numbers between 0-360
 
   // we don't want to fall through the earth
-  if(posI[3] <= 0)
+  if(posI._data[2][0] <= 0)
   {
-    posI[3] = 0;
-    vI[3] = 0;
-    lin.accI[3] = 0;
+    posI._data[2][0] = 0;
+    vI._data[2][0] = 0;
+    lin.accI._data[2][0] = 0;
   }
+  temp = posI._data[1][0];
+  posI._data[1][0] = posI._data[2][0];
+  posI._data[2][0] = temp;
   // save quad position for plot
   return posI;
 }
