@@ -2,12 +2,12 @@ function [ w ] = ddtinvTransMatrix(angl)
 % matrix used to find angular velocities in the inertial frame from body
 % frame
 % etadot = inv(W_eta)*nu
-  sx = sin(angl(1));
+  sx = sind(angl(1));
 
-  cx = cos(angl(1));
-  cy = cos(angl(2));
+  cx = cosd(angl(1));
+  cy = cosd(angl(2));
 
-  ty = tan(angl(2));
+  ty = tand(angl(2));
 
   w = [ 0, angl(1)*cx*ty+angl(2)*sx/(cy)^2, -angl(1)*sx*cy+angl(2)*cx/cy^2;
         0, -angl(1)*sx, -angl(1)*cx;

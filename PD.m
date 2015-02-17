@@ -1,14 +1,16 @@
-function [ thrust, torqX, torqY, torqZ ] = PD( g, m, Ixx, Iyy, Izz, vDesired, vActual, posDesired, posActual, anglesActual, anglesDesired, anglesVelActual, anglesVelDesired)
+function [ thrust, torqX, torqY, torqZ ] = PD( g, m, Ixx, Iyy, Izz, vDesired, vActual, posDesired, posActual, anglesDesired, anglesActual, anglesVelDesired, anglesVelActual)
 %PD Summary of this function goes here
 %   Detailed explanation goes here
-    KzpD = 60;
-    KxD = 1.75;
-    KyD = 1.75;
-    KzD = 1.75;
-    KzpP = 7000;
-    KxP = 6;
-    KyP = 6;
-    KzP = 6;
+    % derivative of position and rotations, elimnates errors
+    KzpD = 100;
+    KxD = 100;
+    KyD = 100;
+    KzD = 100;
+    % Propotional of position and rotations, increase quickness
+    KzpP = 800;
+    KxP = 800;
+    KyP = 800;
+    KzP = 800;
     
     cx = cosd(anglesActual(1));
     cy = cosd(anglesActual(2));

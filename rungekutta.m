@@ -1,9 +1,15 @@
-function accI = rungekutta(G, R, Tb, m)
+function [newV, newP] = rungekutta(a,v,p,dt)
+k1 = a*dt;
+k2 = (dt/2)*k1;
+k3 = (dt/2)*k2;
+k4 = k3*dt;
 
-%k1 = hf(xn,yn)
-%k2 = hf(xn + h/2,yn + k1/2)
-%k3 = hf(xn + h/2,yn + k2/2)
-%k4 = hf(xn + h,yn + k3)
-%yn+1 = yn + 1/6(k1 + 2*k2 + 2*k3 + k4)
+newV = v + (dt/6)*(k1 + 2*k2 + 2*k3 + k4);
 
+k1 = newV*dt;
+k2 = (dt/2)*k1;
+k3 = (dt/2)*k2;
+k4 = k3*dt;
+
+newP = p + (dt/6)*(k1 + 2*k2 + 2*k3 + k4);
 end

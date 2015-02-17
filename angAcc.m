@@ -11,7 +11,11 @@ wT = rav(1)-rav(2)+rav(3)-rav(4);
 
 [Tb, Tm ] = rotorTorque( b, l, k, rav);
 % equation 11
-angAcc = [((Iyy-Izz)*av(2)*av(3))/Ixx; ((Izz-Ixx)*av(1)*av(3))/Iyy; ((Ixx-Iyy)*av(1)*av(2))/Izz;] - Ir * [av(2)/Ixx; -av(1)/Iyy; 0] * wT + [Tb(1)/Ixx; Tb(2)/Iyy; Tb(3)/Izz;];
+Iv = [((Iyy-Izz)*av(2)*av(3))/Ixx; ...
+      ((Izz-Ixx)*av(1)*av(3))/Iyy; ...
+      ((Ixx-Iyy)*av(1)*av(2))/Izz;];
+  
+angAcc = Iv - Ir * [av(2)/Ixx; -av(1)/Iyy; 0] * wT + [Tb(1)/Ixx; Tb(2)/Iyy; Tb(3)/Izz;];
 
 % equation 12
 angAccI = ddtinvTransMatrix(a)*av+invTransMatrix(a)*angAcc;
