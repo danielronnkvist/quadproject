@@ -20,13 +20,20 @@
     rot x: <span id="rotx"></span><br>
     rot y: <span id="roty"></span><br>
     rot z: <span id="rotz"></span><br>
+    <br>
+    rotor 1: <span id="rot1"></span><br>
+    rotor 2: <span id="rot2"></span><br>
+    rotor 3: <span id="rot3"></span><br>
+    rotor 4: <span id="rot4"></span><br>
+    <br>
+    hover: <span id="hover"></span><br>
   </p>
   <script src="https://ajax.googleapis.com/ajax/libs/threejs/r69/three.min.js"></script>
   <script src="http://cdnjs.cloudflare.com/ajax/libs/mathjs/1.2.0/math.min.js"></script>
+  <script src="scripts/geometry.js"></script>
   <script src="scripts/mathFunctions.js"></script>
   <script src="scripts/positionCalculation.js"></script>
   <script src="scripts/flightControl.js"></script>
-  <script src="scripts/geometry.js"></script>
   <script>
     var scene = new THREE.Scene();
     var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
@@ -37,7 +44,7 @@
 
     scene.add(copter);
 
-    camera.up.set( 0, 0, 1 );
+    // camera.up.set( 0, 0, 1 );
     camera.position.z = 5;
     camera.position.y = 2;
     var clock =  new THREE.Clock(),
@@ -45,11 +52,11 @@
         rotorAngV;
 
     var render = function () {
-      delta = clock.getDelta()/4;
+      delta = clock.getDelta();
       requestAnimationFrame( render );
 
       // Update velocities and rotations
-      controls.update(delta);
+      controls.update(0.01);
       // console.log('The rotor', controls.rotors);
       // console.log(THREE.Mesh);
 
@@ -62,30 +69,29 @@
                                [controls.rotors.r2*controls.hover],
                                [controls.rotors.r3*controls.hover],
                                [controls.rotors.r4*controls.hover]]);
-      // console.log(rotorAngV._data[0][0], rotorAngV._data[1][0], rotorAngV._data[2][0], rotorAngV._data[3][0])
+      console.log(rotorAngV._data[0][0], rotorAngV._data[1][0], rotorAngV._data[2][0], rotorAngV._data[3][0])
       // console.log(rotorAngV)
       // copter.translate3d(newPos(delta));
-      var pos = newPos(delta);
-      // console.log(pos._data[0][0], pos._data[1][0], pos._data[2][0])
-      copter.translateX(pos._data[0][0]);
-      copter.translateZ(pos._data[1][0]);
+      var pos = newPos(0.01);
+      debugger;
+      console.log(pos[0], pos[1], pos[2])
+      copter.translateX(pos[0]);
+      copter.translateZ(pos[2]);
 
-      if(pos._data[2][0] + copter.position.y < 0)
+      if(pos[1] + copter.position.y < 0)
         copter.position.y = 0;
       else
-        copter.translateY(pos._data[2][0]);
+        copter.translateY(pos[1]);
 
-      // for (var i = 0; i < 4; i++) {
-      //   rotors[i].rotation.y += 2*(Math.cos(controls.velocities.z) + Math.cos(controls.velocities.y) + Math.cos(controls.velocities.x));
-      // };
-      // copter.rotation.z = -controls.velocities.x;
-      // copter.rotation.x = controls.velocities.z;
-
+      rotors[0].rotation.y -= controls.rotors.r1/10;
+      rotors[1].rotation.y += controls.rotors.r2/10;
+      rotors[2].rotation.y += controls.rotors.r3/10;
+      rotors[3].rotation.y -= controls.rotors.r4/10;
 
       // Display velocities on screen
-      document.getElementById('vx').innerHTML = controls.velocities.x;
-      document.getElementById('vy').innerHTML = controls.velocities.y;
-      document.getElementById('vz').innerHTML = controls.velocities.z;
+      document.getElementById('vx').innerHTML = pos[0];
+      document.getElementById('vy').innerHTML = pos[1];
+      document.getElementById('vz').innerHTML = pos[2];
 
       document.getElementById('px').innerHTML = copter.position.x;
       document.getElementById('py').innerHTML = copter.position.y;
@@ -94,6 +100,13 @@
       document.getElementById('rotx').innerHTML = copter.rotation.x * 57.296;
       document.getElementById('roty').innerHTML = copter.rotation.y * 57.296;
       document.getElementById('rotz').innerHTML = copter.rotation.z * 57.296;
+
+      document.getElementById('rot1').innerHTML = controls.rotors.r1;
+      document.getElementById('rot2').innerHTML = controls.rotors.r2;
+      document.getElementById('rot3').innerHTML = controls.rotors.r3;
+      document.getElementById('rot4').innerHTML = controls.rotors.r4;
+
+      document.getElementById('hover').innerHTML = controls.hover;
 
       renderer.render(scene, camera);
     };

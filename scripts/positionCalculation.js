@@ -16,7 +16,7 @@ var inertiaM = math.matrix([[Ixx, 0, 0],
 
 // lift constant
 var radius = 0.2;
-var k = 2.98*Math.pow(10,-6);
+var k = 8*Math.pow(10,-6);
 // drag contant
 var b = 1.14*Math.pow(10,-7);
 // arm length on quad
@@ -39,7 +39,6 @@ var vI = math.matrix([[0],
 var angV = math.matrix([[0],
                         [0],
                         [0]]);
-console.log(angV)
 var acc = math.matrix([[0],
                        [0],
                        [0]]);
@@ -85,7 +84,6 @@ function rotorTorque(){
 body frame*/
 // function [ w ] = ddtinvTransMatrix(angl)
 function ddtinvTransMatrix(angI){
-
    // etadot = inv(W_eta)*nu
    var sx = Math.sin(angI._data[0][0]);
    var cx = Math.cos(angI._data[0][0]);
@@ -127,7 +125,7 @@ function angAcc(angI){
 
    // [Tb, Tm ] = rotorTorque( b, l, k, rav);
   var rTorque = rotorTorque();
-  console.log(rTorque)
+
   var tb = rTorque.tb;
   var tm = rTorque.tm;
 
@@ -152,9 +150,11 @@ function angAcc(angI){
   //FIXME - use mathFunctions
   // var angAccI = ddtinvTransMatrix(angI)*angV+invTransMatrix(angI)*angAcc;
   var angIV = math.multiply(ddtinvTransMatrix(angI), angV);
-  var angIAc = math.matrix([[invTransMatrix(angI)._data[0][0]*angAcc._data[0][0] + invTransMatrix(angI)._data[0][1]*angAcc._data[1][0] +  invTransMatrix(angI)._data[0][2]*angAcc._data[2][0]],
-                            [invTransMatrix(angI)._data[1][0]*angAcc._data[0][0] + invTransMatrix(angI)._data[1][1]*angAcc._data[1][0] +  invTransMatrix(angI)._data[1][2]*angAcc._data[2][0]],
-                            [invTransMatrix(angI)._data[2][0]*angAcc._data[0][0] + invTransMatrix(angI)._data[2][1]*angAcc._data[1][0] +  invTransMatrix(angI)._data[2][2]*angAcc._data[2][0]]]);
+  var invTM = invTransMatrix(angI);
+
+  var angIAc = math.matrix([[invTM._data[0][0]*angAcc._data[0][0] + invTM._data[0][1]*angAcc._data[1][0] +  invTM._data[0][2]*angAcc._data[2][0]],
+                            [invTM._data[1][0]*angAcc._data[0][0] + invTM._data[1][1]*angAcc._data[1][0] +  invTM._data[1][2]*angAcc._data[2][0]],
+                            [invTM._data[2][0]*angAcc._data[0][0] + invTM._data[2][1]*angAcc._data[1][0] +  invTM._data[2][2]*angAcc._data[2][0]]]);
   var angAccI = matrixAdd(angIV, angIAc);
 
   return {
@@ -278,11 +278,12 @@ USER INPUT
 hover = 907.6;
 rotorAngV = hover*[1;1;1;1];
 */
-
+var angI = copterRotation();
+var posI = copterPosition();
 function newPos(delta){
-  var posI, angI, lin, ang, accI, temp;
-  posI = copterPosition();
-  angI = copterRotation();
+  delta = 200*delta;
+  var lin, ang, accI, temp;
+
   // Calculate linear and angular acceleration for quad
   lin = linAcc(angI, v);
   ang = angAcc(angI);
@@ -327,9 +328,10 @@ function newPos(delta){
     vI._data[2][0] = 0;
     lin.accI._data[2][0] = 0;
   }
-  temp = posI._data[1][0];
-  posI._data[1][0] = posI._data[2][0];
-  posI._data[2][0] = temp;
+  temp = [];
+  temp[0] = vI._data[0][0];
+  temp[1] = vI._data[2][0];
+  temp[2] = vI._data[1][0];
   // save quad position for plot
-  return posI;
+  return temp;
 }
