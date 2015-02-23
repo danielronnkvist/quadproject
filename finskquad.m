@@ -17,7 +17,7 @@ inertiaM = [Ixx, 0, 0;
             0, Iyy, 0;
             0, 0, Izz];
 % lift constant
-k = 2.98e-5;
+k = 7.98e-6;
 % drag contant
 b = 1.14e-7;
 
@@ -54,7 +54,7 @@ for t=1:5000
     % time step
     dt = 0.05;
    
-    [thrust, torqX, torqY, torqZ] = PD(gravity, mass, Ixx, Iyy, Izz, [0;0;0;], vI, [0;0;2;], posI, [0;30;0;], angI, [0;0;0;], angVI);
+    [thrust, torqX, torqY, torqZ] = PD(gravity, mass, Ixx, Iyy, Izz, [0;0;0;], vI, [0;0;2;], posI, [10;10;0;], angI, [0;0;0;], angVI);
     rotorAngV = thrustPD( torqX, torqY,torqZ, thrust, k ,l, b );
     
     rotorAngV = sqrt(rotorAngV);

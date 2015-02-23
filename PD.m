@@ -3,9 +3,9 @@ function [ thrust, torqX, torqY, torqZ ] = PD( g, m, Ixx, Iyy, Izz, vDesired, vA
 %   Detailed explanation goes here
     % derivative of position and rotations, elimnates errors
     KzpD = 100;
-    KxD = 100;
-    KyD = 100;
-    KzD = 100;
+    KxD = 40;
+    KyD = 40;
+    KzD = 40;
     % Propotional of position and rotations, increase quickness
     KzpP = 800;
     KxP = 800;
