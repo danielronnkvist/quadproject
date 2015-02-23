@@ -77,6 +77,7 @@ function flightControl(){
       r1Move = true;
       r3Move = true;
     }if(temp.y.neg){
+
       temp.rotors.r1 -= delta;
       temp.rotors.r2 -= delta;
       temp.rotors.r3 -= delta;
@@ -90,6 +91,7 @@ function flightControl(){
       temp.rotors.r2 += delta;
       temp.rotors.r3 += delta;
       temp.rotors.r4 += delta;
+
     }if(temp.z.neg){ // going up, key W
       temp.rotors.r3 += delta;
       temp.rotors.r4 += delta;
@@ -112,20 +114,22 @@ function flightControl(){
       r2Move = true;
       r3Move = true;
     }
-    if(r1Move == false && temp.rotors.r1 > 1) {
-      temp.rotors.r1 -= delta/4;
+
+    if(!r1Move && temp.rotors.r1 > 1) {
+      temp.rotors.r1 -= 4*delta;
+      if (temp.rotors.r1 <1)temp.rotors.r1 = 1;
     }
-    if(r2Move == false && temp.rotors.r2 > 1) {
-      temp.rotors.r2 -= delta/4;
-      //if (temp.rotors.r2 <0)temp.rotors.r2 = 1;
+    if(!r2Move && temp.rotors.r2 > 1) {
+      temp.rotors.r2 -= 4*delta;
+      if (temp.rotors.r2 <1)temp.rotors.r2 = 1;
     }
-    if(r3Move == false && temp.rotors.r3 > 1) {
-      temp.rotors.r3 -= delta/4;
-      //if (temp.rotors.r3 <0)temp.rotors.r3 = 1;
+    if(!r3Move && temp.rotors.r3 > 1) {
+      temp.rotors.r3 -= 4*delta;
+      if (temp.rotors.r3 <1)temp.rotors.r3 = 1;
     }
-    if(r4Move == false && temp.rotors.r4 > 1) {
-      temp.rotors.r4 -= delta/4;
-      //if (temp.rotors.r4 <0)temp.rotors.r4 = 1;
+    if(!r4Move && temp.rotors.r4 > 1) {
+      temp.rotors.r4 -= 4*delta;
+      if (temp.rotors.r4 <1)temp.rotors.r4 = 1;
     }
 
     //console.log(temp.rotors.r1 + " " +temp.rotors.r2 + " " +temp.rotors.r3 + " " +temp.rotors.r4 )
@@ -164,6 +168,7 @@ function flightControl(){
     copter.position.setY(0);
     copter.position.setZ(0);
     copter.rotation.y = 0;
+    temp.rotors.r1 = temp.rotors.r2 = temp.rotors.r3 = temp.rotors.r4 = 1;
     temp.velocities.x = temp.velocities.y = temp.velocities.z = 0;
   };
 
