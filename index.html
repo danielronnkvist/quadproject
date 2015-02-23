@@ -62,11 +62,11 @@
                                [controls.rotors.r2*controls.hover],
                                [controls.rotors.r3*controls.hover],
                                [controls.rotors.r4*controls.hover]]);
-      console.log(rotorAngV._data[0][0], rotorAngV._data[1][0], rotorAngV._data[2][0], rotorAngV._data[3][0])
+      // console.log(rotorAngV._data[0][0], rotorAngV._data[1][0], rotorAngV._data[2][0], rotorAngV._data[3][0])
       // console.log(rotorAngV)
       // copter.translate3d(newPos(delta));
       var pos = newPos(delta);
-      console.log(pos._data[0][0], pos._data[1][0], pos._data[2][0])
+      // console.log(pos._data[0][0], pos._data[1][0], pos._data[2][0])
       copter.translateX(pos._data[0][0]);
       copter.translateZ(pos._data[1][0]);
 

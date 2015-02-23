@@ -72,7 +72,7 @@ function rotorTorque(){
   }
   var tb = math.matrix([[ l*k*Math.pow(-rotorAngV._data[1][0], 2) + Math.pow(rotorAngV._data[3][0],2)],
                         [ l*k*Math.pow(-rotorAngV._data[0][0], 2) + Math.pow(rotorAngV._data[2][0],2)],
-                        [-tm[0]+tm[1]-tm[2]+tm[3]]]);
+                        [-tm[0][0]+tm[1][0]-tm[2][0]+tm[3][0]]]);
 
   return {
     tb: tb,
@@ -114,7 +114,7 @@ function invTransMatrix(angI){
 
 /*Calculates the angular acceleration in body- and inertial frame */
 // function [ angAccI, angAcc  ] = angAcc(b, l, k, Ixx, Iyy, Izz, Ir, rav, av, a)
-function angAcc(rotorAngV, angI){
+function angAcc(angI){
   // function [ angAccI, angAcc  ] = angAcc(b, l, k, Ixx, Iyy, Izz, Ir, rav, av, a)
   //%ANGACC calculate the angular acceleration in bodyframe and inertial frame
   // % b - drag coefficient
@@ -123,28 +123,25 @@ function angAcc(rotorAngV, angI){
   // % rav - rotor angular velocity
   // % av - angular velocity
   // % a - angles
-  var wT = rotorAngV._data[0][0]-rotorAngV._data[1][0]+rotorAngV._data[2][0]-rotorAngV._data[3][0];
+  var wT = -rotorAngV._data[0][0]+rotorAngV._data[1][0]-rotorAngV._data[2][0]+rotorAngV._data[3][0];
 
    // [Tb, Tm ] = rotorTorque( b, l, k, rav);
-  var rTorque = rotorTorque(angV);
+  var rTorque = rotorTorque();
+  console.log(rTorque)
   var tb = rTorque.tb;
   var tm = rTorque.tm;
-
-  // console.log(tb)
-  // console.log(tm)
 
   // FIXME - change var names
   var angAcc1 = math.matrix([[((Iyy-Izz)*angV._data[1][0]*angV._data[2][0])/Ixx],
                              [((Izz-Ixx)*angV._data[0][0]*angV._data[2][0])/Iyy],
                              [((Ixx-Iyy)*angV._data[0][0]*angV._data[1][0])/Izz]]);
-  console.log(angV)
   var angAcc2 = math.matrix([[(-Ir * angV._data[1][0] * wT)/Ixx],
                              [(-Ir * (-angV._data[0][0]) * wT)/Iyy],
                              [0]]);
 
-  var angAcc3 = math.matrix([[tb._data[0]/Ixx],
-                             [tb._data[1]/Iyy],
-                             [tb._data[2]/Izz]]);
+  var angAcc3 = math.matrix([[tb._data[0][0]/Ixx],
+                             [tb._data[1][0]/Iyy],
+                             [tb._data[2][0]/Izz]]);
 
   // FIXME - use mathFunctions
   // equation 11
@@ -188,12 +185,12 @@ returns an object like this:
   acc: 456
 }
 */
-function linAcc(angI, rotorAngV, v){
+function linAcc(angI, v){
   var R = rotationMatrix(angI);
   var G = math.matrix([[0],
                        [0],
                        [-gravity]]);
-  var rf = rotorForce(rotorAngV); // equation 7
+  var rf = rotorForce(); // equation 7
 
   var rg = math.multiply(transp(R), G);
   var rgt = matrixAdd(rg,rf.t);
@@ -243,7 +240,7 @@ function rotationMatrix(rot) {
                     [sum(F)]]);
   }
 */
-function rotorForce(rotorAngV){
+function rotorForce(){
   var f = [];
   var sum = 0;
   for(var i = 0; i < rotorAngV._data.length; i++)
@@ -287,8 +284,8 @@ function newPos(delta){
   posI = copterPosition();
   angI = copterRotation();
   // Calculate linear and angular acceleration for quad
-  lin = linAcc(angI, rotorAngV, v);
-  ang = angAcc(rotorAngV, angI);
+  lin = linAcc(angI, v);
+  ang = angAcc(angI);
 
   // euler steps for velocity and position
   accI = lin.accI;
@@ -309,7 +306,9 @@ function newPos(delta){
   temp = math.matrix([[ang.angAcc._data[0]*delta],
                       [ang.angAcc._data[1]*delta],
                       [ang.angAcc._data[2]*delta]]);
-  angV = matrixAdd(angV, temp);
+  angV = math.matrix([[parseInt(angV._data[0]+temp._data[0])],
+                      [parseInt(angV._data[1]+temp._data[1])],
+                      [parseInt(angV._data[2]+temp._data[2])]])
 
   // temp = dotMultiply(angV, delta);
   temp = math.matrix([[angV._data[0]*delta],
