@@ -56,6 +56,7 @@ function flightControl(){
 
   */
   temp.update = function(delta) {
+    delta = delta * 3;
     var r1Move = false;
     var r2Move = false;
     var r3Move = false;
@@ -76,9 +77,19 @@ function flightControl(){
       r1Move = true;
       r3Move = true;
     }if(temp.y.neg){
-      temp.hover -= 1000*delta;
+      temp.rotors.r1 -= delta;
+      temp.rotors.r2 -= delta;
+      temp.rotors.r3 -= delta;
+      temp.rotors.r4 -= delta;
+      if(temp.rotors.r1 < 1) temp.rotors.r1 = 1;
+      if(temp.rotors.r2 < 1) temp.rotors.r2 = 1;
+      if(temp.rotors.r3 < 1) temp.rotors.r3 = 1;
+      if(temp.rotors.r4 < 1) temp.rotors.r4 = 1;
     }if(temp.y.pos){ // going forwards key I
-      temp.hover += 1000*delta;
+      temp.rotors.r1 += delta;
+      temp.rotors.r2 += delta;
+      temp.rotors.r3 += delta;
+      temp.rotors.r4 += delta;
     }if(temp.z.neg){ // going up, key W
       temp.rotors.r3 += delta;
       temp.rotors.r4 += delta;
@@ -86,7 +97,6 @@ function flightControl(){
       r4Move = true;
     }if(temp.z.pos){ // going down, key S
       // temp.velocities.y -= delta;
-      // going backwards key K
       temp.rotors.r1 += delta;
       temp.rotors.r2 += delta;
       r1Move = true;
@@ -104,20 +114,21 @@ function flightControl(){
     }
     if(r1Move == false && temp.rotors.r1 > 1) {
       temp.rotors.r1 -= delta/4;
-      if (temp.rotors.r1 <0)temp.rotors.r1 = 1;
     }
     if(r2Move == false && temp.rotors.r2 > 1) {
       temp.rotors.r2 -= delta/4;
-      if (temp.rotors.r2 <0)temp.rotors.r2 = 1;
+      //if (temp.rotors.r2 <0)temp.rotors.r2 = 1;
     }
     if(r3Move == false && temp.rotors.r3 > 1) {
       temp.rotors.r3 -= delta/4;
-      if (temp.rotors.r3 <0)temp.rotors.r3 = 1;
+      //if (temp.rotors.r3 <0)temp.rotors.r3 = 1;
     }
     if(r4Move == false && temp.rotors.r4 > 1) {
       temp.rotors.r4 -= delta/4;
-      if (temp.rotors.r4 <0)temp.rotors.r4 = 1;
+      //if (temp.rotors.r4 <0)temp.rotors.r4 = 1;
     }
+
+    //console.log(temp.rotors.r1 + " " +temp.rotors.r2 + " " +temp.rotors.r3 + " " +temp.rotors.r4 )
   };
 
   // Event listeners on keypresses
