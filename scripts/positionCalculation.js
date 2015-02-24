@@ -13,7 +13,7 @@ function newPos(delta){
   angularAccelerations = calculateAngularAcc();
   angularAccelerationInertial = angularAccelerations.inertial;
   angularAcceleration = angularAccelerations.body;
-
+l
   // euler steps for velocity and position
   temp = math.matrix([[accelerationInertial._data[0][0]*delta],
                        [accelerationInertial._data[1][0]*delta],
@@ -47,7 +47,6 @@ function newPos(delta){
 
   angularVelocity = matrixAdd(angularVelocity, temp);
 
-
   temp = [];
   temp[0] = velocityInertial._data[0][0];
   temp[1] = velocityInertial._data[1][0];
@@ -55,6 +54,18 @@ function newPos(delta){
   temp[3] = anglesInertial._data[0][0];
   temp[4] = anglesInertial._data[1][0];
   temp[5] = anglesInertial._data[2][0];
+
+  var rotorTorque = calculateRotorTorque(rotorAngularVelocity);
+  var bodyTorque = calculateBodyTorque(rotorAngularVelocity, rotorTorque);
+  var force = calculateForce(rotorAngularVelocity);
+  var thrust = calculateThrust(force);
+
+
+
+  temp[6] = thrust._data[1][0];
+  temp[7] = bodyTorque._data[0][0];
+  temp[8] = bodyTorque._data[1][0];
+  temp[9] = bodyTorque._data[2][0];
 
   return temp;
 }
@@ -97,7 +108,6 @@ function calculateLinAcc()
 function calculateAngularAcc()
 {
   rotorTorque = calculateRotorTorque(rotorAngularVelocity);
-  console.log(rotorTorque._data[0][0])
   bodyTorque = calculateBodyTorque(rotorAngularVelocity, rotorTorque);
 
   var angAcc1 = math.matrix([[((Iyy-Izz)*angularVelocity._data[1][0]*angularVelocity._data[2][0])/Ixx],
@@ -162,8 +172,8 @@ function calculateRotorTorque(rav){
 function calculateBodyTorque(rav, rotorTorque){
 
   var tb = math.matrix([[ l*k*(-Math.pow(rav._data[1][0], 2) + Math.pow(rav._data[3][0],2)) ],
-                        [ l*k*(-Math.pow(rav._data[0][0], 2) + Math.pow(rav._data[2][0],2)) ],
-                        [-rotorTorque._data[0][0]+rotorTorque._data[1][0]-rotorTorque._data[2][0]+rotorTorque._data[3][0]]
+                        [-rotorTorque._data[0][0]+rotorTorque._data[1][0]-rotorTorque._data[2][0]+rotorTorque._data[3][0]],
+                        [ l*k*(-Math.pow(rav._data[0][0], 2) + Math.pow(rav._data[2][0],2)) ]
                         ]);
   return tb;
 }

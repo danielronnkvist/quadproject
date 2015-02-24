@@ -26,29 +26,6 @@ function flightControl(){
 
   temp.hover = 554.65;
 
-  temp.velocities = {
-    z: 0,
-    y: 0,
-    x: 0,
-    decrease: function(t, axis){
-      if(Math.abs(this[axis]) > 0){
-        if(this[axis] < 0){
-          this[axis] += 2*t;
-          if(this[axis] > 0)
-            this[axis] = 0;
-        }else{
-          this[axis] -= 2*t;
-          if(this[axis] < 0)
-            this[axis] = 0;
-        }
-      }
-    }
-
-
-};
-
-
-
   /*
 
   Alters the velocity with delta depending on which buttons are pressed.
@@ -65,9 +42,7 @@ function flightControl(){
     if(temp.x.neg){
       // turning left key A
       temp.rotors.r1 -= delta;
-      temp.rotors.r2 += delta;
-      temp.rotors.r3 -= delta;
-      temp.rotors.r4 += delta;
+      temp.rotors.r3 += delta;
       r1Move = true;
       r2Move = true;
       r3Move = true;
@@ -75,14 +50,13 @@ function flightControl(){
     }if(temp.x.pos){
       // turning right key D
       temp.rotors.r1 += delta;
-      temp.rotors.r2 -= delta;
-      temp.rotors.r3 += delta;
-      temp.rotors.r4 -= delta;
+      temp.rotors.r3 -= delta;
       r1Move = true;
       r2Move = true;
       r3Move = true;
       r4Move = true;
     }if(temp.y.neg){
+      // going decline key K
       temp.rotors.r1 -= delta;
       temp.rotors.r2 -= delta;
       temp.rotors.r3 -= delta;
@@ -92,7 +66,7 @@ function flightControl(){
       r3Move = true;
       r4Move = true;
     }if(temp.y.pos){
-      // going forwards key I
+      // going upwards key I
       temp.rotors.r1 += delta;
       temp.rotors.r2 += delta;
       temp.rotors.r3 += delta;
@@ -102,18 +76,14 @@ function flightControl(){
       r3Move = true;
       r4Move = true;
     }if(temp.z.neg){ // going forward, key W
-      temp.rotors.r1 += delta;
       temp.rotors.r2 += delta;
-      temp.rotors.r3 -= delta;
       temp.rotors.r4 -= delta;
       r1Move = true;
       r2Move = true;
       r3Move = true;
       r4Move = true;
     }if(temp.z.pos){ // going backwards, key S
-      temp.rotors.r1 -= delta;
       temp.rotors.r2 -= delta;
-      temp.rotors.r3 += delta;
       temp.rotors.r4 += delta;
       r1Move = true;
       r2Move = true;
@@ -122,27 +92,36 @@ function flightControl(){
     }if(temp.yaw.neg){ // yawing clockwise key L
       temp.rotors.r1 += delta;
       temp.rotors.r2 -= delta;
+      temp.rotors.r3 += delta;
+      temp.rotors.r4 -= delta;
+      r1Move = true;
+      r2Move = true;
+      r3Move = true;
+      r4Move = true;
+    }if(temp.yaw.pos){ // yawing counter-clockwise key J ev. adding a variable
+      temp.rotors.r1 -= delta;
+      temp.rotors.r2 += delta;
       temp.rotors.r3 -= delta;
       temp.rotors.r4 += delta;
       r1Move = true;
       r2Move = true;
       r3Move = true;
       r4Move = true;
-    }if(temp.yaw.pos){ // yawing counter-clockwise key J ev. adding a variable
-      r1Move = true;
-      r2Move = true;
-      r3Move = true;
-      r4Move = true;
     }
 
-    if(!r1Move)
-      temp.rotors.r1 = 1;
-    if(!r2Move)
-      temp.rotors.r2 = 1;
-    if(!r3Move)
-      temp.rotors.r3 = 1;
-    if(!r4Move)
-      temp.rotors.r4 = 1;
+    // if(!r1Move)
+    //   temp.rotors.r1 = 1;
+    // if(!r2Move)
+    //   temp.rotors.r2 = 1;
+    // if(!r3Move)
+    //   temp.rotors.r3 = 1;
+    // if(!r4Move)
+    //   temp.rotors.r4 = 1;
+
+      temp.rotors.r1 = parseFloat(temp.rotors.r1.toFixed(4));
+      temp.rotors.r2 = parseFloat(temp.rotors.r2.toFixed(4));
+      temp.rotors.r3 = parseFloat(temp.rotors.r3.toFixed(4));
+      temp.rotors.r4 = parseFloat(temp.rotors.r4.toFixed(4));
   };
 
   // Event listeners on keypresses
