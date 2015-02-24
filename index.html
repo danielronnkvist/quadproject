@@ -53,8 +53,8 @@
     var renderer = new THREE.WebGLRenderer();
     renderer.setSize( window.innerWidth, window.innerHeight );
     document.body.appendChild( renderer.domElement );
-
-    scene.add(copter);
+    var copter = new Copter();
+    scene.add(copter.object);
 
     // camera.up.set( 0, 0, 1 );
     camera.position.z = 5;
@@ -62,7 +62,7 @@
     var clock =  new THREE.Clock(),
         controls = flightControl(),
         rotorAngV;
-      copter.position.y = positionInertial._data[1][0];
+      copter.object.position.y = positionInertial._data[1][0];
 
     var render = function () {
       delta = clock.getDelta();
@@ -75,32 +75,20 @@
                                [Math.sqrt(controls.rotors.r2)*controls.hover],
                                [Math.sqrt(controls.rotors.r3)*controls.hover],
                                [Math.sqrt(controls.rotors.r4)*controls.hover]]);
-      var pos = newPos(0.01);
-
-      copter.position.x = (pos[0]);
-      copter.position.y = (pos[1]);
-      copter.position.z = (pos[2]);
-
-
-      copter.rotation.x = pos[3];
-      copter.rotation.y = pos[4];
-      copter.rotation.z = pos[5];
-
-      //if(copter.position.y <= 0)
-      //  copter.position.y = 2;
+      var pos = copter.update(0.01);
 
       // Display velocities on screen
       document.getElementById('vx').innerHTML = pos[10];
       document.getElementById('vy').innerHTML = pos[11];
       document.getElementById('vz').innerHTML = pos[12];
 
-      document.getElementById('px').innerHTML = copter.position.x;
-      document.getElementById('py').innerHTML = copter.position.y;
-      document.getElementById('pz').innerHTML = copter.position.z;
+      document.getElementById('px').innerHTML = copter.object.position.x;
+      document.getElementById('py').innerHTML = copter.object.position.y;
+      document.getElementById('pz').innerHTML = copter.object.position.z;
 
-      document.getElementById('rotx').innerHTML = copter.rotation.x * 57.296; // <-- 180/pi
-      document.getElementById('roty').innerHTML = copter.rotation.y * 57.296; // <-- 180/pi
-      document.getElementById('rotz').innerHTML = copter.rotation.z * 57.296; // <-- 180/pi
+      document.getElementById('rotx').innerHTML = copter.object.rotation.x * 57.296; // <-- 180/pi
+      document.getElementById('roty').innerHTML = copter.object.rotation.y * 57.296; // <-- 180/pi
+      document.getElementById('rotz').innerHTML = copter.object.rotation.z * 57.296; // <-- 180/pi
 
       document.getElementById('rot1').innerHTML = controls.rotors.r1;
       document.getElementById('rot2').innerHTML = controls.rotors.r2;
