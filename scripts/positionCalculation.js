@@ -67,6 +67,16 @@ function calculateLinAcc()
   var G = math.matrix([[0],
                        [-gravity],
                        [0]]);
+  // Make PD to stabilize system
+  // Get output rotorAngularVelocity
+  //Use zeroMat for desiredVelocity and desired angularVelocity
+  var zeroMat = math.matrix([[0],[0],[0]]);
+  // TODO: change the "2", should be adjustable by the user. Desired position, get from keys pressed
+  var posMat = math.matrix([[0],[0],[2]]);
+  // TOSO: change "30", should be adjustable, desired angle, get from keys pressed
+  var angMat = math.matrix([[0],[30],[0]]);
+  var PDvar = PD(gravity, mass, Ixx, Iyy, Izz, zeroMat, velocity, posMat, positionInertial, angMat, anglesInertial, zeroMat, angularVelocity);
+  rotorAngularVelocity = thrustPD(PDvar.torqX, PDvar.torqY, PDvar.torqZ, PDvar.thrust, k, l, b);
   var force = calculateForce(rotorAngularVelocity);
   var thrust = calculateThrust(force);
   var rg = math.multiply(transp(R),G);
@@ -87,6 +97,7 @@ function calculateLinAcc()
   var accI = math.matrix([[grtArvI._data[0]*(1/mass)],
                           [grtArvI._data[1]*(1/mass)],
                           [grtArvI._data[2]*(1/mass)]]);
+  
   return {
     body: acc,
     inertial: accI
@@ -141,7 +152,9 @@ function calculateThrust(f)
 function calculateForce(rav)
 {
   var f = [];
-  for(var i = 0; i < rav._data.length; i++)
+  // for i = 0; i < rav._data.length .. 
+  console.log(rotorAngularVelocity._data.length)
+  for(var i = 0; i < 4; i++)
   {
     var temp = k*Math.pow(rav._data[i][0], 2);
     f.push([temp]);
