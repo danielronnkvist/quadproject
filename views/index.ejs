@@ -18,6 +18,8 @@
   <script src="scripts/positionCalculation.js"></script>
   <script src="scripts/flightControl.js"></script>
   <script>
+  </script>
+  <script>
     var socket = io();
     var scene = new THREE.Scene();
     var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
@@ -25,19 +27,21 @@
     var renderer = new THREE.WebGLRenderer();
     renderer.setSize( window.innerWidth, window.innerHeight );
     document.body.appendChild( renderer.domElement );
-    var copters = [];
+    var copters = JSON.parse('<%= copters %>');
     var copter = new Copter();
-    copters.push(copter.object);
-    for(var i = 0; i < copters.length; i++)
-      scene.add(copters[i]);
+    socket.emit('add copter', copter.object);
 
-    // camera.up.set( 0, 0, 1 );
     camera.position.z = 5;
     camera.position.y = 2;
     var clock =  new THREE.Clock();
       copter.object.position.y = copter.positionInertial._data[1][0];
-
+    var first = true;
     var render = function () {
+      socket.on('add copter', function(c){
+        console.log(c);
+        scene.add(c);
+      });
+
       delta = clock.getDelta();
       requestAnimationFrame( render );
       // Update velocities and rotations
