@@ -1,22 +1,22 @@
-function PD (gravity, mass, Ixx, Iyy, Izz, vDesired, vActual, posDesired, posActual, anglesActual, anglesDesired, angVelActual, angVelDesired){
+function PD (gravity, mass, Ixx, Iyy, Izz, vDesired, vActual, posDesired, posActual, anglesDesired, anglesActual, angVelDesired, angVelActual){
 	// Function PD
-	var kzpD = 60;
-	var kxD = 1.75;
-	var kyD = 1.75;
-	var kzD = 1.75;
-	var kzpP = 7000;
-	var kxP = 6;
-	var kyP = 6;
-	var kzP = 6;
+	// constant needs to be fixed
+	var kzpD = 400;
+	var kxD = 40;
+	var kyD = 1;
+	var kzD = 40;
+	var kzpP = 40;
+	var kxP = 40;
+	var kyP = 1;
+	var kzP = 40;
 
-	// calculating the angles in degrees
-	var cx = Math.cos(angI.data_[0]/180*Math.PI);
-	var cy = Math.cos(angI.data_[1]/180*Math.PI);
-
-	var thrust = (gravity + kzpD * (vDesired.data_[2]-vActual.data_[2]) + kzpP*(posDesired.data_[2]-posActual.data_[2]))*mass/(cx*cy);
-	var torqX = (kxD*(angVelDesired.data_[0]-angVelActual.data_[0])+kxP*(anglesDesired.data_[0]-anglesActual.data_[0]))*Ixx;
-	var torqY = (kyD*(angVelDesired.data_[1]-angVelActual.data_[1])+kyP*(anglesDesired.data_[1]-anglesActual.data_[1]))*Iyy;
-	var torqZ = (kzD*(angVelDesired.data_[2]-angVelActual.data_[2])+kzP*(anglesDesired.data_[2]-anglesActual.data_[2]))*Izz;
+	// calculating the angles in degrees 
+	var cx = Math.cos(anglesInertial._data[0]/180*Math.PI);
+	var cz = Math.cos(anglesInertial._data[2][0]/180*Math.PI);
+	var thrust = (gravity + kzpD * (vDesired._data[1]-vActual._data[1]) + kzpP*(posDesired._data[1]-posActual._data[1]))*mass/(cx*cz);
+	var torqX = (kxD*(angVelDesired._data[0]-angVelActual._data[0])+kxP*(anglesDesired._data[0]-anglesActual._data[0]))*Ixx;
+	var torqY = (kyD*(angVelDesired._data[1]-angVelActual._data[1])+kyP*(anglesDesired._data[1]-anglesActual._data[1]))*Iyy;
+	var torqZ = (kzD*(angVelDesired._data[2]-angVelActual._data[2])+kzP*(anglesDesired._data[2]-anglesActual._data[2]))*Izz;
 
 	  return {
     torqX: torqX,
@@ -26,16 +26,15 @@ function PD (gravity, mass, Ixx, Iyy, Izz, vDesired, vActual, posDesired, posAct
   };
 }
 
-function thrustPD (torqX, torqY,torqZ, T, k ,l, b) {
-	// THRUSTPD Summary of this function goes here
-	// Detailed explanation goes here
-
-    rotorAngV.data_[0] = T/(4*k) - torqY/(2*k*l) - torqZ/(4*b);
-    rotorAngV.data_[1] = T/(4*k) - torqX/(2*k*l) + torqZ/(4*b);
-    rotorAngV.data_[2] = T/(4*k) + torqY/(2*k*l) - torqZ/(4*b);
-    rotorAngV.data_[3] = T/(4*k) + torqX/(2*k*l) + torqZ/(4*b);
-
+function thrustPD (torqX, torqY,torqZ, T, k ,l, b, rav) {
+	// Calculating rotor angular velocity from regulator
+	// T = thrust (from function PD)
+    rav._data[0][0] = Math.sqrt(Math.max(T/(4*k) - torqY/(2*k*l) - torqZ/(4*b),0));
+    rav._data[1][0] = Math.sqrt(Math.max(T/(4*k) - torqX/(2*k*l) + torqZ/(4*b),0));
+    rav._data[2][0] = Math.sqrt(Math.max(T/(4*k) + torqY/(2*k*l) - torqZ/(4*b),0));
+    rav._data[3][0] = Math.sqrt(Math.max(T/(4*k) + torqX/(2*k*l) + torqZ/(4*b),0));
+    console.log(rav._data[1][0]);
     return {
-    	rotorAngV: rotorAngV
+    	rav: rav
     };
 }

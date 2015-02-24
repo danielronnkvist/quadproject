@@ -13,7 +13,6 @@ function newPos(delta){
   angularAccelerations = calculateAngularAcc();
   angularAccelerationInertial = angularAccelerations.inertial;
   angularAcceleration = angularAccelerations.body;
-l
   // euler steps for velocity and position
   temp = math.matrix([[accelerationInertial._data[0][0]*delta],
                        [accelerationInertial._data[1][0]*delta],
@@ -24,7 +23,6 @@ l
   temp = math.matrix([[velocityInertial._data[0][0]*delta],
                        [velocityInertial._data[1][0]*delta],
                        [velocityInertial._data[2][0]*delta]]);
-
   positionInertial = matrixAdd(positionInertial, temp);
 
   // euler steps for angularvelocity and angles
@@ -39,7 +37,7 @@ l
                        [angularVelocityInertial._data[2][0]*delta]]);
 
   anglesInertial = matrixAdd(anglesInertial, temp);
-
+  
 
   temp = math.matrix([[angularAcceleration._data[0][0]*delta],
                        [angularAcceleration._data[1][0]*delta],
@@ -48,9 +46,10 @@ l
   angularVelocity = matrixAdd(angularVelocity, temp);
 
   temp = [];
-  temp[0] = velocityInertial._data[0][0];
-  temp[1] = velocityInertial._data[1][0];
-  temp[2] = velocityInertial._data[2][0];
+  temp[0] = positionInertial._data[0][0];
+  temp[1] = positionInertial._data[1][0];
+  temp[2] = positionInertial._data[2][0];
+  // OBS: angleInertia blir NaN!!
   temp[3] = anglesInertial._data[0][0];
   temp[4] = anglesInertial._data[1][0];
   temp[5] = anglesInertial._data[2][0];
@@ -60,13 +59,12 @@ l
   var force = calculateForce(rotorAngularVelocity);
   var thrust = calculateThrust(force);
 
-
-
   temp[6] = thrust._data[1][0];
   temp[7] = bodyTorque._data[0][0];
   temp[8] = bodyTorque._data[1][0];
   temp[9] = bodyTorque._data[2][0];
 
+  //console.log(temp)
   return temp;
 }
 
@@ -82,13 +80,15 @@ function calculateLinAcc()
   // Get output rotorAngularVelocity
   //Use zeroMat for desiredVelocity and desired angularVelocity
   var zeroMat = math.matrix([[0],[0],[0]]);
-  // TODO: change the "2", should be adjustable by the user. Desired position, get from keys pressed
-  var posMat = math.matrix([[0],[0],[2]]);
-  // TOSO: change "30", should be adjustable, desired angle, get from keys pressed
-  var angMat = math.matrix([[0],[30],[0]]);
+
   var PDvar = PD(gravity, mass, Ixx, Iyy, Izz, zeroMat, velocity, posMat, positionInertial, angMat, anglesInertial, zeroMat, angularVelocity);
-  rotorAngularVelocity = thrustPD(PDvar.torqX, PDvar.torqY, PDvar.torqZ, PDvar.thrust, k, l, b);
-  var force = calculateForce(rotorAngularVelocity);
+  // swapping Y and Z to have Y as the "up" axis instead of Z
+  var rotorAngularTemp = thrustPD(PDvar.torqX, PDvar.torqZ, PDvar.torqY, PDvar.thrust, k, l, b, rotorAngularVelocity);
+  
+
+  //var force = calculateForce(rotorAngularVelocity);
+  rotorAngularVelocity = rotorAngularTemp.rav; 
+  var force = calculateForce(rotorAngularVelocity); 
   var thrust = calculateThrust(force);
   var rg = math.multiply(transp(R),G);
   var rgt = matrixAdd(rg, thrust);
@@ -102,13 +102,12 @@ function calculateLinAcc()
   var arvi = math.matrix([[velocityInertial._data[0] * Ar._data[0][0]],
                           [velocityInertial._data[1] * Ar._data[1][1]],
                           [velocityInertial._data[2] * Ar._data[2][2]]]); // Ar * vI
-
+  
   var grtArvI = matrixSub(matrixAdd(G, rt), arvi);
 
   var accI = math.matrix([[grtArvI._data[0]*(1/mass)],
                           [grtArvI._data[1]*(1/mass)],
                           [grtArvI._data[2]*(1/mass)]]);
-  
   return {
     body: acc,
     inertial: accI
@@ -120,7 +119,6 @@ function calculateAngularAcc()
 {
   rotorTorque = calculateRotorTorque(rotorAngularVelocity);
   bodyTorque = calculateBodyTorque(rotorAngularVelocity, rotorTorque);
-
   var angAcc1 = math.matrix([[((Iyy-Izz)*angularVelocity._data[1][0]*angularVelocity._data[2][0])/Ixx],
                              [((Izz-Ixx)*angularVelocity._data[0][0]*angularVelocity._data[2][0])/Iyy],
                              [((Ixx-Iyy)*angularVelocity._data[0][0]*angularVelocity._data[1][0])/Izz]]);
@@ -133,7 +131,6 @@ function calculateAngularAcc()
   var angAccI1 = math.matrix([[dtiTM._data[0][0]*angularVelocity._data[0][0]+dtiTM._data[0][1]*angularVelocity._data[1][0]+dtiTM._data[0][2]*angularVelocity._data[2][0]],
                               [dtiTM._data[1][0]*angularVelocity._data[0][0]+dtiTM._data[1][1]*angularVelocity._data[1][0]+dtiTM._data[1][2]*angularVelocity._data[2][0]],
                               [dtiTM._data[2][0]*angularVelocity._data[0][0]+dtiTM._data[2][1]*angularVelocity._data[1][0]+dtiTM._data[2][2]*angularVelocity._data[2][0]]]);
-
   var angAccI2 = math.matrix([[iTM._data[0][0]*angAcc._data[0][0]+iTM._data[0][1]*angAcc._data[1][0]+iTM._data[0][2]*angAcc._data[2][0]],
                               [iTM._data[1][0]*angAcc._data[0][0]+iTM._data[1][1]*angAcc._data[1][0]+iTM._data[1][2]*angAcc._data[2][0]],
                               [iTM._data[2][0]*angAcc._data[0][0]+iTM._data[2][1]*angAcc._data[1][0]+iTM._data[2][2]*angAcc._data[2][0]]]);
@@ -143,6 +140,19 @@ function calculateAngularAcc()
     body: angAcc,
     inertial: angAccI
   };
+}
+
+
+function calculateForce(rav)
+{
+  var f = [];
+  //could write "rav._data.length" instead of 4..  
+  for(var i = 0; i < 4; i++)
+  {
+    var temp = k*Math.pow(rav._data[i][0], 2);
+    f.push([temp]);
+  }
+  return math.matrix(f);
 }
 
 
@@ -159,25 +169,11 @@ function calculateThrust(f)
                      [0]]);
 }
 
-function calculateForce(rav)
-{
-  var f = [];
-  // for i = 0; i < rav._data.length .. 
-  console.log(rotorAngularVelocity._data.length)
-  for(var i = 0; i < 4; i++)
-  {
-    var temp = k*Math.pow(rav._data[i][0], 2);
-    f.push([temp]);
-  }
-  return math.matrix(f);
-}
-
-
-
 function calculateRotorTorque(rav){
   var tm = []; //should also have +Im*wdot but us omitted. Im = 3.357e-5
   for(var i = 0; i < rav._data.length; i++){
-    tm.push([b*Math.pow(rav._data[i][0], 2)])
+    var temp = b*Math.pow(rav._data[i][0], 2);
+    tm.push([temp])
  }
  return math.matrix(tm);
 }
@@ -185,7 +181,7 @@ function calculateRotorTorque(rav){
 function calculateBodyTorque(rav, rotorTorque){
 
   var tb = math.matrix([[ l*k*(-Math.pow(rav._data[1][0], 2) + Math.pow(rav._data[3][0],2)) ],
-                        [-rotorTorque._data[0][0]+rotorTorque._data[1][0]-rotorTorque._data[2][0]+rotorTorque._data[3][0]],
+                        [-rotorTorque._data[0][0]+rotorTorque._data[1][0]-rotorTorque._data[2]+rotorTorque._data[3][0]],
                         [ l*k*(-Math.pow(rav._data[0][0], 2) + Math.pow(rav._data[2][0],2)) ]
                         ]);
   return tb;
