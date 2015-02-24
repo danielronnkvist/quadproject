@@ -37,7 +37,7 @@ function newPos(delta){
                        [angularVelocityInertial._data[2][0]*delta]]);
 
   anglesInertial = matrixAdd(anglesInertial, temp);
-  
+
 
   temp = math.matrix([[angularAcceleration._data[0][0]*delta],
                        [angularAcceleration._data[1][0]*delta],
@@ -64,6 +64,12 @@ function newPos(delta){
   temp[8] = bodyTorque._data[1][0];
   temp[9] = bodyTorque._data[2][0];
 
+  temp[10] = velocityInertial._data[0][0];
+  temp[11] = velocityInertial._data[1][0];
+  temp[12] = velocityInertial._data[2][0];
+
+
+
   //console.log(temp)
   return temp;
 }
@@ -84,11 +90,11 @@ function calculateLinAcc()
   var PDvar = PD(gravity, mass, Ixx, Iyy, Izz, zeroMat, velocity, posMat, positionInertial, angMat, anglesInertial, zeroMat, angularVelocity);
   // swapping Y and Z to have Y as the "up" axis instead of Z
   var rotorAngularTemp = thrustPD(PDvar.torqX, PDvar.torqZ, PDvar.torqY, PDvar.thrust, k, l, b, rotorAngularVelocity);
-  
+
 
   //var force = calculateForce(rotorAngularVelocity);
-  rotorAngularVelocity = rotorAngularTemp.rav; 
-  var force = calculateForce(rotorAngularVelocity); 
+  rotorAngularVelocity = rotorAngularTemp.rav;
+  var force = calculateForce(rotorAngularVelocity);
   var thrust = calculateThrust(force);
   var rg = math.multiply(transp(R),G);
   var rgt = matrixAdd(rg, thrust);
@@ -102,7 +108,7 @@ function calculateLinAcc()
   var arvi = math.matrix([[velocityInertial._data[0] * Ar._data[0][0]],
                           [velocityInertial._data[1] * Ar._data[1][1]],
                           [velocityInertial._data[2] * Ar._data[2][2]]]); // Ar * vI
-  
+
   var grtArvI = matrixSub(matrixAdd(G, rt), arvi);
 
   var accI = math.matrix([[grtArvI._data[0]*(1/mass)],
@@ -146,7 +152,7 @@ function calculateAngularAcc()
 function calculateForce(rav)
 {
   var f = [];
-  //could write "rav._data.length" instead of 4..  
+  //could write "rav._data.length" instead of 4..
   for(var i = 0; i < 4; i++)
   {
     var temp = k*Math.pow(rav._data[i][0], 2);

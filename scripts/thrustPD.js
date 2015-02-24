@@ -1,16 +1,16 @@
 function PD (gravity, mass, Ixx, Iyy, Izz, vDesired, vActual, posDesired, posActual, anglesDesired, anglesActual, angVelDesired, angVelActual){
 	// Function PD
 	// constant needs to be fixed
-	var kzpD = 400;
-	var kxD = 40;
-	var kyD = 1;
-	var kzD = 40;
-	var kzpP = 40;
-	var kxP = 40;
-	var kyP = 1;
-	var kzP = 40;
+	var kzpD = 800;
+	var kxD = 100;
+	var kyD = 100;
+	var kzD = 100;
+	var kzpP = 200;
+	var kxP = 200;
+	var kyP = 200;
+	var kzP = 200;
 
-	// calculating the angles in degrees 
+	// calculating the angles in degrees
 	var cx = Math.cos(anglesInertial._data[0]/180*Math.PI);
 	var cz = Math.cos(anglesInertial._data[2][0]/180*Math.PI);
 	var thrust = (gravity + kzpD * (vDesired._data[1]-vActual._data[1]) + kzpP*(posDesired._data[1]-posActual._data[1]))*mass/(cx*cz);

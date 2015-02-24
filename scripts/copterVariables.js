@@ -35,7 +35,7 @@ var rotorAngularVelocity = math.matrix([[554.65],
                                         [554.65],
                                         [554.65]]);
 
-  // TODO: change the "2", it should be adjustable by the user in flightControl. 
+  // TODO: change the "2", it should be adjustable by the user in flightControl.
   // Used as: Desired position, get from keys pressed
   var posMat = math.matrix([[0],[2],[0]]);
   // TODO: change "30", it should be adjustable by user

@@ -31,7 +31,11 @@
     torqueX: <span id="torqueX"></span><br>
     torqueY: <span id="torqueY"></span><br>
     torqueZ: <span id="torqueZ"></span><br>
-
+    <br>
+    Desired height: <span id="desH"></span><br>
+    Desired pitch: <span id="desP"></span><br>
+    Desired yaw: <span id="desY"></span><br>
+    Desired roll: <span id="desR"></span><br>
   </p>
   <script src="https://ajax.googleapis.com/ajax/libs/threejs/r69/three.min.js"></script>
   <script src="http://cdnjs.cloudflare.com/ajax/libs/mathjs/1.2.0/math.min.js"></script>
@@ -62,9 +66,7 @@
 
     var render = function () {
       delta = clock.getDelta();
-      setTimeout( function() {
       requestAnimationFrame( render );
-      }, 1000 / 30);
       // Update velocities and rotations
       controls.update(0.01);
 
@@ -87,11 +89,10 @@
       //if(copter.position.y <= 0)
       //  copter.position.y = 2;
 
-
       // Display velocities on screen
-      document.getElementById('vx').innerHTML = pos[0];
-      document.getElementById('vy').innerHTML = pos[1];
-      document.getElementById('vz').innerHTML = pos[2];
+      document.getElementById('vx').innerHTML = pos[10];
+      document.getElementById('vy').innerHTML = pos[11];
+      document.getElementById('vz').innerHTML = pos[12];
 
       document.getElementById('px').innerHTML = copter.position.x;
       document.getElementById('py').innerHTML = copter.position.y;
@@ -111,6 +112,12 @@
       document.getElementById('torqueX').innerHTML = pos[7];
       document.getElementById('torqueY').innerHTML = pos[8];
       document.getElementById('torqueZ').innerHTML = pos[9];
+
+      document.getElementById('desH').innerHTML = posMat._data[1][0];
+      document.getElementById('desP').innerHTML = angMat._data[0][0];
+      document.getElementById('desY').innerHTML = angMat._data[1][0];
+      document.getElementById('desR').innerHTML = angMat._data[2][0];
+
 
 
       renderer.render(scene, camera);
