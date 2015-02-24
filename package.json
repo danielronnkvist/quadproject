@@ -1,0 +1,23 @@
+{
+  "name": "Quadcopter",
+  "version": "0.1.0",
+  "description": "Fly nice",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "~4.11.2",
+    "socket.io": "~1.3.4",
+    "ejs": "~2.3.1"
+  },
+  "engines": {
+    "node": "0.10.x"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/danielronnkvist/quadproject"
+  },
+  "author": "Daniel Rönnkvist",
+  "license": "MIT"
+}

@@ -8,6 +8,7 @@
   </style>
 </head>
 <body>
+  <script src="https://cdn.socket.io/socket.io-1.3.4.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/threejs/r69/three.min.js"></script>
   <script src="http://cdnjs.cloudflare.com/ajax/libs/mathjs/1.2.0/math.min.js"></script>
   <script src="scripts/mathFunctions.js"></script>
@@ -17,6 +18,7 @@
   <script src="scripts/positionCalculation.js"></script>
   <script src="scripts/flightControl.js"></script>
   <script>
+    var socket = io();
     var scene = new THREE.Scene();
     var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
 
