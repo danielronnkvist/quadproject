@@ -62,7 +62,7 @@
     var clock =  new THREE.Clock(),
         controls = flightControl(),
         rotorAngV;
-      copter.object.position.y = positionInertial._data[1][0];
+      copter.object.position.y = copter.positionInertial._data[1][0];
 
     var render = function () {
       delta = clock.getDelta();
@@ -101,10 +101,10 @@
       document.getElementById('torqueY').innerHTML = pos[8];
       document.getElementById('torqueZ').innerHTML = pos[9];
 
-      document.getElementById('desH').innerHTML = posMat._data[1][0];
-      document.getElementById('desP').innerHTML = angMat._data[0][0];
-      document.getElementById('desY').innerHTML = angMat._data[1][0];
-      document.getElementById('desR').innerHTML = angMat._data[2][0];
+      document.getElementById('desH').innerHTML = copter.posMat._data[1][0];
+      document.getElementById('desP').innerHTML = copter.angMat._data[0][0];
+      document.getElementById('desY').innerHTML = copter.angMat._data[1][0];
+      document.getElementById('desR').innerHTML = copter.angMat._data[2][0];
 
 
 

@@ -21,10 +21,56 @@ var Copter = function(){
   this.object.add( this.copterBody );
   for(var i = 0; i < 4; i++)
     this.object.add( this.rotors[i] );
+
+  /*COPTER VARIABLES*/
+
+  // variables for intertial frame
+  // element 0 is x-axis -> right/left on screen
+  // element 1 is y-axis -> up/down on screen
+  // element 2 is z-axis -> in/out on screen
+  this.positionInertial  = math.matrix([[0],
+                                        [2],
+                                        [0]]);
+
+  this.anglesInertial = math.matrix([[0],
+                                     [0],
+                                     [0]]);
+
+  this.angularVelocityInertial = math.matrix([[0],
+                                              [0],
+                                              [0]]);
+  this.accelerationInertial = math.matrix([[0],
+                                           [0],
+                                           [0]]);
+  this.velocityInertial = math.matrix([[0],
+                                       [0],
+                                       [0]]);
+  // Variables for body frame
+  this.angularVelocity = math.matrix([[0],
+                                      [0],
+                                      [0]]);
+  this.acceleration = math.matrix([[0],
+                                   [0],
+                                   [0]]);
+  this.velocity = math.matrix([[0],
+                               [0],
+                               [0]]);
+
+  this.rotorAngularVelocity = math.matrix([[554.65],
+                                           [554.65],
+                                           [554.65],
+                                           [554.65]]);
+
+  // TODO: change the "2", it should be adjustable by the user in flightControl.
+  // Used as: Desired position, get from keys pressed
+  this.posMat = math.matrix([[0],[2],[0]]);
+  // TODO: change "30", it should be adjustable by user
+  // Used as: desired angle, get from keys pressed
+  this.angMat = math.matrix([[0],[0],[0]]);
 }
 
 Copter.prototype.update = function(delta){
-  var pos = newPos(delta);
+  var pos = this.newPos(delta);
 
   this.object.position.x = (pos[0]);
   this.object.position.y = (pos[1]);
