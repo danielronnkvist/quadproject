@@ -134,6 +134,7 @@ function flightControl(){
       r3Move = true;
       r4Move = true;
     }
+
     if(!r1Move)
       temp.rotors.r1 = 1;
     if(!r2Move)
