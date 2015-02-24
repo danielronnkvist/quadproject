@@ -30,8 +30,10 @@
   </p>
   <script src="https://ajax.googleapis.com/ajax/libs/threejs/r69/three.min.js"></script>
   <script src="http://cdnjs.cloudflare.com/ajax/libs/mathjs/1.2.0/math.min.js"></script>
-  <script src="scripts/geometry.js"></script>
   <script src="scripts/mathFunctions.js"></script>
+  <script src="scripts/geometry.js"></script>
+  <script src="scripts/constants.js"></script>
+  <script src="scripts/copterVariables.js"></script>
   <script src="scripts/positionCalculation.js"></script>
   <script src="scripts/flightControl.js"></script>
   <script>
@@ -53,40 +55,33 @@
 
     var render = function () {
       delta = clock.getDelta();
+      setTimeout( function() {
       requestAnimationFrame( render );
-
+      }, 1000 / 20);
       // Update velocities and rotations
       controls.update(0.01);
-      // console.log('The rotor', controls.rotors);
-      // console.log(THREE.Mesh);
-
-      // Apply transformations
-      // copter.translateX(controls.velocities.x);
-      // copter.translateZ(controls.velocities.z);
 
       //Use this late, FIXME
-      rotorAngV = math.matrix([[controls.rotors.r1*controls.hover],
+      rotorAngularVelocity = math.matrix([[controls.rotors.r1*controls.hover],
                                [controls.rotors.r2*controls.hover],
                                [controls.rotors.r3*controls.hover],
                                [controls.rotors.r4*controls.hover]]);
-      console.log(rotorAngV._data[0][0], rotorAngV._data[1][0], rotorAngV._data[2][0], rotorAngV._data[3][0])
-      // console.log(rotorAngV)
-      // copter.translate3d(newPos(delta));
       var pos = newPos(0.01);
-      debugger;
-      console.log(pos[0], pos[1], pos[2])
+
       copter.translateX(pos[0]);
+      copter.translateY(pos[1]);
       copter.translateZ(pos[2]);
+      copter.rotation.x = pos[3];
+      copter.rotation.y = pos[4];
+      copter.rotation.z = pos[5];
 
-      if(pos[1] + copter.position.y < 0)
-        copter.position.y = 0;
-      else
-        copter.translateY(pos[1]);
+      if(copter.position.y <= 0)
+        copter.position.y = 2;
 
-      rotors[0].rotation.y -= controls.rotors.r1/10;
-      rotors[1].rotation.y += controls.rotors.r2/10;
-      rotors[2].rotation.y += controls.rotors.r3/10;
-      rotors[3].rotation.y -= controls.rotors.r4/10;
+      // rotors[0].rotation.y -= controls.rotors.r1/10;
+      // rotors[1].rotation.y += controls.rotors.r2/10;
+      // rotors[2].rotation.y += controls.rotors.r3/10;
+      // rotors[3].rotation.y -= controls.rotors.r4/10;
 
       // Display velocities on screen
       document.getElementById('vx').innerHTML = pos[0];

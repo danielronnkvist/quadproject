@@ -24,7 +24,7 @@ function flightControl(){
     r4: 1,
   };
 
-  temp.hover = 967;
+  temp.hover = 554.65;
 
   temp.velocities = {
     z: 0,
@@ -56,69 +56,92 @@ function flightControl(){
 
   */
   temp.update = function(delta) {
-    delta = 3*delta;
+    delta = delta/10;
     var r1Move = false;
     var r2Move = false;
     var r3Move = false;
     var r4Move = false;
 
     if(temp.x.neg){
-      // temp.velocities.x -= delta;
       // turning left key A
+      temp.rotors.r1 -= delta;
       temp.rotors.r2 += delta;
+      temp.rotors.r3 -= delta;
       temp.rotors.r4 += delta;
+      r1Move = true;
       r2Move = true;
+      r3Move = true;
       r4Move = true;
     }if(temp.x.pos){
-      // temp.velocities.x += delta;
       // turning right key D
       temp.rotors.r1 += delta;
+      temp.rotors.r2 -= delta;
       temp.rotors.r3 += delta;
-      r1Move = true;
-      r3Move = true;
-    }if(temp.y.neg){
-      temp.hover -= 100*delta;
-    }if(temp.y.pos){ // going forwards key I
-      temp.hover += 100*delta;
-    }if(temp.z.neg){ // going up, key W
-      temp.rotors.r3 += delta;
-      temp.rotors.r4 += delta;
-      r3Move = true;
-      r4Move = true;
-    }if(temp.z.pos){ // going down, key S
-      // temp.velocities.y -= delta;
-      // going backwards key K
-      temp.rotors.r1 += delta;
-      temp.rotors.r2 += delta;
+      temp.rotors.r4 -= delta;
       r1Move = true;
       r2Move = true;
+      r3Move = true;
+      r4Move = true;
+    }if(temp.y.neg){
+      temp.rotors.r1 -= delta;
+      temp.rotors.r2 -= delta;
+      temp.rotors.r3 -= delta;
+      temp.rotors.r4 -= delta;
+      r1Move = true;
+      r2Move = true;
+      r3Move = true;
+      r4Move = true;
+    }if(temp.y.pos){
+      // going forwards key I
+      temp.rotors.r1 += delta;
+      temp.rotors.r2 += delta;
+      temp.rotors.r3 += delta;
+      temp.rotors.r4 += delta;
+      r1Move = true;
+      r2Move = true;
+      r3Move = true;
+      r4Move = true;
+    }if(temp.z.neg){ // going forward, key W
+      temp.rotors.r1 += delta;
+      temp.rotors.r2 += delta;
+      temp.rotors.r3 -= delta;
+      temp.rotors.r4 -= delta;
+      r1Move = true;
+      r2Move = true;
+      r3Move = true;
+      r4Move = true;
+    }if(temp.z.pos){ // going backwards, key S
+      temp.rotors.r1 -= delta;
+      temp.rotors.r2 -= delta;
+      temp.rotors.r3 += delta;
+      temp.rotors.r4 += delta;
+      r1Move = true;
+      r2Move = true;
+      r3Move = true;
+      r4Move = true;
     }if(temp.yaw.neg){ // yawing clockwise key L
       temp.rotors.r1 += delta;
+      temp.rotors.r2 -= delta;
+      temp.rotors.r3 -= delta;
       temp.rotors.r4 += delta;
       r1Move = true;
-      r4Move = true;
-    }if(temp.yaw.pos){ // yawing counter-clockwise key J ev. adding a variable
-      temp.rotors.r2 += delta;
-      temp.rotors.r3 += delta;
       r2Move = true;
       r3Move = true;
+      r4Move = true;
+    }if(temp.yaw.pos){ // yawing counter-clockwise key J ev. adding a variable
+      r1Move = true;
+      r2Move = true;
+      r3Move = true;
+      r4Move = true;
     }
-    if(!r1Move && temp.rotors.r1 > 1) {
-      temp.rotors.r1 -= 4*delta;
-      if (temp.rotors.r1 <1)temp.rotors.r1 = 1;
-    }
-    if(!r2Move && temp.rotors.r2 > 1) {
-      temp.rotors.r2 -= 4*delta;
-      if (temp.rotors.r2 <1)temp.rotors.r2 = 1;
-    }
-    if(!r3Move && temp.rotors.r3 > 1) {
-      temp.rotors.r3 -= 4*delta;
-      if (temp.rotors.r3 <1)temp.rotors.r3 = 1;
-    }
-    if(!r4Move && temp.rotors.r4 > 1) {
-      temp.rotors.r4 -= 4*delta;
-      if (temp.rotors.r4 <1)temp.rotors.r4 = 1;
-    }
+    if(!r1Move)
+      temp.rotors.r1 = 1;
+    if(!r2Move)
+      temp.rotors.r2 = 1;
+    if(!r3Move)
+      temp.rotors.r3 = 1;
+    if(!r4Move)
+      temp.rotors.r4 = 1;
   };
 
   // Event listeners on keypresses
