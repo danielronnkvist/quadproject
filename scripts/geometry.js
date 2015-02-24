@@ -22,6 +22,9 @@ var Copter = function(){
   for(var i = 0; i < 4; i++)
     this.object.add( this.rotors[i] );
 
+  // Controls
+  this.controls = new FlightControl(this);
+
   /*COPTER VARIABLES*/
 
   // variables for intertial frame
@@ -70,6 +73,11 @@ var Copter = function(){
 }
 
 Copter.prototype.update = function(delta){
+  this.controls.update(delta);
+  this.rotorAngularVelocity = math.matrix([[Math.sqrt(this.controls.rotors.r1)*this.controls.hover],
+                                           [Math.sqrt(this.controls.rotors.r2)*this.controls.hover],
+                                           [Math.sqrt(this.controls.rotors.r3)*this.controls.hover],
+                                           [Math.sqrt(this.controls.rotors.r4)*this.controls.hover]]);
   var pos = this.newPos(delta);
 
   this.object.position.x = (pos[0]);

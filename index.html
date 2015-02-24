@@ -59,22 +59,13 @@
     // camera.up.set( 0, 0, 1 );
     camera.position.z = 5;
     camera.position.y = 2;
-    var clock =  new THREE.Clock(),
-        controls = flightControl(),
-        rotorAngV;
+    var clock =  new THREE.Clock();
       copter.object.position.y = copter.positionInertial._data[1][0];
 
     var render = function () {
       delta = clock.getDelta();
       requestAnimationFrame( render );
       // Update velocities and rotations
-      controls.update(0.01);
-
-      //Use this late, FIXME
-      rotorAngularVelocity = math.matrix([[Math.sqrt(controls.rotors.r1)*controls.hover],
-                               [Math.sqrt(controls.rotors.r2)*controls.hover],
-                               [Math.sqrt(controls.rotors.r3)*controls.hover],
-                               [Math.sqrt(controls.rotors.r4)*controls.hover]]);
       var pos = copter.update(0.01);
 
       // Display velocities on screen
@@ -90,10 +81,10 @@
       document.getElementById('roty').innerHTML = copter.object.rotation.y * 57.296; // <-- 180/pi
       document.getElementById('rotz').innerHTML = copter.object.rotation.z * 57.296; // <-- 180/pi
 
-      document.getElementById('rot1').innerHTML = controls.rotors.r1;
-      document.getElementById('rot2').innerHTML = controls.rotors.r2;
-      document.getElementById('rot3').innerHTML = controls.rotors.r3;
-      document.getElementById('rot4').innerHTML = controls.rotors.r4;
+      document.getElementById('rot1').innerHTML = copter.controls.rotors.r1;
+      document.getElementById('rot2').innerHTML = copter.controls.rotors.r2;
+      document.getElementById('rot3').innerHTML = copter.controls.rotors.r3;
+      document.getElementById('rot4').innerHTML = copter.controls.rotors.r4;
 
       document.getElementById('thrust').innerHTML = pos[6];
 
@@ -105,8 +96,6 @@
       document.getElementById('desP').innerHTML = copter.angMat._data[0][0];
       document.getElementById('desY').innerHTML = copter.angMat._data[1][0];
       document.getElementById('desR').innerHTML = copter.angMat._data[2][0];
-
-
 
       renderer.render(scene, camera);
     };
