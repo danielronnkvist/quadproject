@@ -26,7 +26,12 @@
     rotor 3: <span id="rot3"></span><br>
     rotor 4: <span id="rot4"></span><br>
     <br>
-    hover: <span id="hover"></span><br>
+    thrust: <span id="thrust"></span><br>
+    <br>
+    torqueX: <span id="torqueX"></span><br>
+    torqueY: <span id="torqueY"></span><br>
+    torqueZ: <span id="torqueZ"></span><br>
+
   </p>
   <script src="https://ajax.googleapis.com/ajax/libs/threejs/r69/three.min.js"></script>
   <script src="http://cdnjs.cloudflare.com/ajax/libs/mathjs/1.2.0/math.min.js"></script>
@@ -63,15 +68,17 @@
       controls.update(0.01);
 
       //Use this late, FIXME
-      rotorAngularVelocity = math.matrix([[controls.rotors.r1*controls.hover],
-                               [controls.rotors.r2*controls.hover],
-                               [controls.rotors.r3*controls.hover],
-                               [controls.rotors.r4*controls.hover]]);
+      rotorAngularVelocity = math.matrix([[Math.sqrt(controls.rotors.r1)*controls.hover],
+                               [Math.sqrt(controls.rotors.r2)*controls.hover],
+                               [Math.sqrt(controls.rotors.r3)*controls.hover],
+                               [Math.sqrt(controls.rotors.r4)*controls.hover]]);
       var pos = newPos(0.01);
 
       copter.translateX(pos[0]);
       copter.translateY(pos[1]);
       copter.translateZ(pos[2]);
+
+
       copter.rotation.x = pos[3];
       copter.rotation.y = pos[4];
       copter.rotation.z = pos[5];
@@ -79,10 +86,6 @@
       if(copter.position.y <= 0)
         copter.position.y = 2;
 
-      // rotors[0].rotation.y -= controls.rotors.r1/10;
-      // rotors[1].rotation.y += controls.rotors.r2/10;
-      // rotors[2].rotation.y += controls.rotors.r3/10;
-      // rotors[3].rotation.y -= controls.rotors.r4/10;
 
       // Display velocities on screen
       document.getElementById('vx').innerHTML = pos[0];
@@ -93,16 +96,21 @@
       document.getElementById('py').innerHTML = copter.position.y;
       document.getElementById('pz').innerHTML = copter.position.z;
 
-      document.getElementById('rotx').innerHTML = copter.rotation.x * 57.296;
-      document.getElementById('roty').innerHTML = copter.rotation.y * 57.296;
-      document.getElementById('rotz').innerHTML = copter.rotation.z * 57.296;
+      document.getElementById('rotx').innerHTML = copter.rotation.x * 57.296; // <-- 180/pi
+      document.getElementById('roty').innerHTML = copter.rotation.y * 57.296; // <-- 180/pi
+      document.getElementById('rotz').innerHTML = copter.rotation.z * 57.296; // <-- 180/pi
 
       document.getElementById('rot1').innerHTML = controls.rotors.r1;
       document.getElementById('rot2').innerHTML = controls.rotors.r2;
       document.getElementById('rot3').innerHTML = controls.rotors.r3;
       document.getElementById('rot4').innerHTML = controls.rotors.r4;
 
-      document.getElementById('hover').innerHTML = controls.hover;
+      document.getElementById('thrust').innerHTML = pos[6];
+
+      document.getElementById('torqueX').innerHTML = pos[7];
+      document.getElementById('torqueY').innerHTML = pos[8];
+      document.getElementById('torqueZ').innerHTML = pos[9];
+
 
       renderer.render(scene, camera);
     };
