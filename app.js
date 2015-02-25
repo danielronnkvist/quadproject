@@ -6,17 +6,26 @@ var express = require('express'),
     redis = require('redis'),
     client = redis.createClient(); // Creates a new client
 
+var user;
+
 // EXPRESS CONFIG
 app.set('view engine', 'ejs');
 app.set('port', process.env.PORT || 8000);
 app.use("/scripts",express.static(__dirname+"/scripts"));
 
 app.get('/', function(req, res){
+  res.render('index.ejs');
+});
+
+app.get('/copters', function(req,res){
   client.smembers('copters', function(err, reply){
-    console.log(reply)
-    res.render('index.ejs', {
-      copters: reply
+    console.log(reply);
+    var copters = [];
+    reply.forEach(function(r){
+      copters.push(JSON.parse(r).copter);
     });
+    console.log(copters)
+    res.send(copters);
   });
 });
 
@@ -30,17 +39,55 @@ client.on('connect', function() {
 
 io.on('connection', function(socket){
   console.log('a user connected');
+  user = socket.id;
+  socket.on('disconnect', function(){
+    client.smembers('copters', function(err, reply){
+      reply.forEach(function(copter, index){
+        if(JSON.parse(copter).user == user){
+          client.del(['copters', copter], function(err, reply){
+            console.log("Removed users copter");
+          });
+        }
+      });
+    });
+    console.log('user disconnected');
+  });
+
   socket.on('add copter', function(msg){
-    // console.log(msg);
-    client.sadd(['copters', JSON.stringify(msg)], function(err, reply){
+    client.sadd(['copters', JSON.stringify({user: user, copter: msg})], function(err, reply){
       if(!err){
         console.log("Added copter to redis");
-        socket.emit('add copter', msg);
+        io.emit('add copter', msg);
       }
     });
   });
 
-
+  /*
+    FIX ME
+    Shouldn't have to delete the set to update an entry
+  */
+  socket.on('update copter', function(msg){
+    client.smembers('copters', function(err, reply){
+      var i = -1;
+      reply.forEach(function(copter, index){
+        if(JSON.parse(copter).user == user)
+          i = index;
+      });
+      reply[i] = JSON.stringify({user: user, copter: msg});
+      client.del('copters', function(err, reply){
+        if(err) console.log(err);
+      });
+      client.sadd(['copters', reply], function(err, reply){
+        client.smembers('copters', function(err, reply){
+          for(var i = 0; i < reply.length; i++){
+            reply[i] = JSON.parse(reply[i]).copter;
+          }
+          console.log(reply);
+          socket.emit('update copter', reply);
+        });
+      });
+    });
+  });
 });
 http.listen(app.get('port'), function(){
   console.log("Server running on port %d", app.get('port'));

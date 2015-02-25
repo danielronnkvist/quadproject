@@ -18,8 +18,28 @@
   <script src="scripts/positionCalculation.js"></script>
   <script src="scripts/flightControl.js"></script>
   <script>
-  </script>
-  <script>
+    var getJSON = function(url, successHandler, errorHandler) {
+      var xhr = typeof XMLHttpRequest != 'undefined'
+        ? new XMLHttpRequest()
+        : new ActiveXObject('Microsoft.XMLHTTP');
+      xhr.open('get', url, true);
+      xhr.onreadystatechange = function() {
+        var status;
+        var data;
+        // https://xhr.spec.whatwg.org/#dom-xmlhttprequest-readystate
+        if (xhr.readyState == 4) { // `DONE`
+          status = xhr.status;
+          if (status == 200) {
+            data = JSON.parse(xhr.responseText);
+            successHandler && successHandler(data);
+          } else {
+            errorHandler && errorHandler(status);
+          }
+        }
+      };
+      xhr.send();
+    };
+
     var socket = io();
     var scene = new THREE.Scene();
     var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
@@ -27,9 +47,43 @@
     var renderer = new THREE.WebGLRenderer();
     renderer.setSize( window.innerWidth, window.innerHeight );
     document.body.appendChild( renderer.domElement );
-    var copters = JSON.parse('<%= copters %>');
+
+    var copterPositions = [];
+    var copters = [];
+
+    getJSON('/copters', function(data){
+      copterPositions = data;
+    }, function(err){
+      console.error(err);
+    });
+
     var copter = new Copter();
-    socket.emit('add copter', copter.object);
+    copters.push(copter);
+    copterPositions.push(copter.getPosition());
+    scene.add(copter.object);
+    for(var i = 0; i < copterPositions.length-1; i++){
+      var temp = new Copter();
+      temp.setPosition(copterPositions[i]);
+      copters.push(temp);
+      scene.add(temp.object);
+    }
+
+    var first = true;
+    socket.emit('add copter', copter.getPosition());
+    socket.on('add copter', function(c){
+      if(first){
+        first = false;
+      }else{
+        copterPositions.push(c);
+        var temp = new Copter()
+        temp.setPosition(c);
+        copters.push(temp);
+        scene.add(temp.object);
+      }
+    });
+    socket.on('update copter', function(position){
+      copterPositions = position;
+    });
 
     camera.position.z = 5;
     camera.position.y = 2;
@@ -37,15 +91,13 @@
       copter.object.position.y = copter.positionInertial._data[1][0];
     var first = true;
     var render = function () {
-      socket.on('add copter', function(c){
-        console.log(c);
-        scene.add(c);
-      });
-
       delta = clock.getDelta();
       requestAnimationFrame( render );
       // Update velocities and rotations
-      copter.update(0.01);
+      socket.emit('update copter', copter.update(0.01));
+      for(var i = 0; i < copters.length; i++){
+        copters[i].setPosition(copterPositions[i]);
+      }
 
       renderer.render(scene, camera);
     };
