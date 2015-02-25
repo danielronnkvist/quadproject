@@ -79,14 +79,42 @@ Copter.prototype.update = function(delta){
                                            [Math.sqrt(this.controls.rotors.r3)*this.controls.hover],
                                            [Math.sqrt(this.controls.rotors.r4)*this.controls.hover]]);
   var pos = this.newPos(delta);
+  var temp = {};
+  temp.position = {};
+  temp.rotation = {};
 
-  this.object.position.x = (pos[0]);
-  this.object.position.y = (pos[1]);
-  this.object.position.z = (pos[2]);
+  temp.position.x = pos[0];
+  temp.position.y = pos[1];
+  temp.position.z = pos[2];
 
-  this.object.rotation.x = pos[3];
-  this.object.rotation.y = pos[4];
-  this.object.rotation.z = pos[5];
+  temp.rotation.x = pos[3];
+  temp.rotation.y = pos[4];
+  temp.rotation.z = pos[5];
 
-  return pos;
+  return temp;
+}
+
+Copter.prototype.getPosition = function(){
+  return {
+    position: {
+      x: this.object.position.x,
+      y: this.object.position.y,
+      z: this.object.position.z
+    },
+    rotation: {
+      x: this.object.rotation.x,
+      y: this.object.rotation.y,
+      z: this.object.rotation.z
+    }
+  }
+}
+
+Copter.prototype.setPosition = function(data){
+  this.object.position.x = data.position.x;
+  this.object.position.y = data.position.y;
+  this.object.position.z = data.position.z;
+
+  this.object.rotation.x = data.rotation.x;
+  this.object.rotation.y = data.rotation.y;
+  this.object.rotation.z = data.rotation.z;
 }
