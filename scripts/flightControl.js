@@ -10,7 +10,7 @@ The function temp.velocities.decrease(t, axis) decreases the velocity on the axi
 
 */
 var FlightControl = function(copter){
-  _this = this;
+  var _this = this;
   this.copter = copter;
   this.x   = { pos: false, neg: false };
   this.y   = { pos: false, neg: false };
@@ -18,7 +18,6 @@ var FlightControl = function(copter){
   this.yaw = { pos: false, neg: false };
 
   this.rotors = {
-
     r1: 1,
     r2: 1,
     r3: 1,

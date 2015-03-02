@@ -39,71 +39,75 @@
       };
       xhr.send();
     };
-
+    var user;
     var socket = io();
-    var scene = new THREE.Scene();
-    var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
+    socket.on('user id', function(id){
+      console.log(id)
+      user = id;
+      var scene = new THREE.Scene();
+      var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
 
-    var renderer = new THREE.WebGLRenderer();
-    renderer.setSize( window.innerWidth, window.innerHeight );
-    document.body.appendChild( renderer.domElement );
+      var renderer = new THREE.WebGLRenderer();
+      renderer.setSize( window.innerWidth, window.innerHeight );
+      document.body.appendChild( renderer.domElement );
 
-    var copterPositions = [];
-    var copters = [];
+      var copterPositions = [];
+      var copters = [];
 
-    getJSON('/copters', function(data){
-      copterPositions = data;
-    }, function(err){
-      console.error(err);
-    });
+      getJSON('/copters', function(data){
+        copterPositions = data;
+      }, function(err){
+        console.error(err);
+      });
 
-    var copter = new Copter();
-    copters.push(copter);
-    copterPositions.push(copter.getPosition());
-    scene.add(copter.object);
-    for(var i = 0; i < copterPositions.length-1; i++){
-      var temp = new Copter();
-      temp.setPosition(copterPositions[i]);
-      copters.push(temp);
-      scene.add(temp.object);
-    }
-
-    var first = true;
-    socket.emit('add copter', copter.getPosition());
-    socket.on('add copter', function(c){
-      if(first){
-        first = false;
-      }else{
-        copterPositions.push(c);
-        var temp = new Copter()
-        temp.setPosition(c);
+      var copter = new Copter();
+      copters.push(copter);
+      copterPositions.push(copter.getPosition());
+      scene.add(copter.object);
+      for(var i = 0; i < copterPositions.length-1; i++){
+        var temp = new Copter(false);
+        temp.setPosition(copterPositions[i]);
         copters.push(temp);
         scene.add(temp.object);
       }
+
+      var first = true;
+      debugger
+      socket.emit('add copter', {copter: copter.getPosition(), user: user});
+      socket.on('add copter', function(c){
+        if(first){
+          first = false;
+        }else{
+          copterPositions.push(c);
+          var temp = new Copter(false);
+          temp.setPosition(c);
+          copters.push(temp);
+          scene.add(temp.object);
+        }
+      });
+      socket.on('update copter', function(positions){
+        copterPositions = positions;
+      });
+
+      camera.position.z = 5;
+      camera.position.y = 2;
+      var clock =  new THREE.Clock();
+        copter.object.position.y = copter.positionInertial._data[1][0];
+      var first = true;
+      var render = function () {
+        delta = clock.getDelta();
+        requestAnimationFrame( render );
+        // Update velocities and rotations
+        socket.emit('update copter', {copter: copter.update(0.01), user: user});
+        for(var i = 0; i < copters.length; i++){
+          copters[i].setPosition(copterPositions[i]);
+        }
+
+        renderer.render(scene, camera);
+      };
+
+      render();
     });
-    socket.on('update copter', function(position){
-      copterPositions = position;
-    });
-
-    camera.position.z = 5;
-    camera.position.y = 2;
-    var clock =  new THREE.Clock();
-      copter.object.position.y = copter.positionInertial._data[1][0];
-    var first = true;
-    var render = function () {
-      delta = clock.getDelta();
-      requestAnimationFrame( render );
-      // Update velocities and rotations
-      socket.emit('update copter', copter.update(0.01));
-      for(var i = 0; i < copters.length; i++){
-        copters[i].setPosition(copterPositions[i]);
-      }
-
-      renderer.render(scene, camera);
-    };
-
-    render();
-
     </script>
 </body>
 </html>

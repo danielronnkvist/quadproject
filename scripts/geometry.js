@@ -1,4 +1,7 @@
-var Copter = function(){
+var Copter = function(controls){
+  if(controls == undefined){
+    controls = true;
+  }
   this.copterGeometry = new THREE.BoxGeometry( 1, 0.3, 1 );
   this.green = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
   this.copterBody = new THREE.Mesh( this.copterGeometry, this.green );
@@ -22,8 +25,10 @@ var Copter = function(){
   for(var i = 0; i < 4; i++)
     this.object.add( this.rotors[i] );
 
-  // Controls
-  this.controls = new FlightControl(this);
+  if(controls){
+    // Controls
+    this.controls = new FlightControl(this);
+  }
 
   /*COPTER VARIABLES*/
 

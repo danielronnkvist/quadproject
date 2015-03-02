@@ -39,7 +39,7 @@ client.on('connect', function() {
 
 io.on('connection', function(socket){
   console.log('a user connected');
-  user = socket.id;
+  socket.emit('user id', socket.id);
   socket.on('disconnect', function(){
     client.smembers('copters', function(err, reply){
       reply.forEach(function(copter, index){
@@ -54,10 +54,11 @@ io.on('connection', function(socket){
   });
 
   socket.on('add copter', function(msg){
-    client.sadd(['copters', JSON.stringify({user: user, copter: msg})], function(err, reply){
+    console.log(msg)
+    client.sadd(['copters', JSON.stringify(msg)], function(err, reply){
       if(!err){
-        console.log("Added copter to redis");
-        io.emit('add copter', msg);
+        console.log("Added copter to redis", msg);
+        io.emit('add copter', msg.copter);
       }
     });
   });
@@ -67,13 +68,17 @@ io.on('connection', function(socket){
     Shouldn't have to delete the set to update an entry
   */
   socket.on('update copter', function(msg){
+    // console.log(msg)
     client.smembers('copters', function(err, reply){
-      var i = -1;
-      reply.forEach(function(copter, index){
-        if(JSON.parse(copter).user == user)
-          i = index;
-      });
-      reply[i] = JSON.stringify({user: user, copter: msg});
+      for(var i = 0; i < reply.length; i++){
+      // console.log(JSON.parse(reply[i]))
+      //   console.log(reply[i].user, msg.user);
+        if(JSON.parse(reply[i]).user == msg.user)
+        {
+          reply[i] = JSON.stringify(msg);
+          break;
+        }
+      }
       client.del('copters', function(err, reply){
         if(err) console.log(err);
       });
@@ -82,8 +87,7 @@ io.on('connection', function(socket){
           for(var i = 0; i < reply.length; i++){
             reply[i] = JSON.parse(reply[i]).copter;
           }
-          console.log(reply);
-          socket.emit('update copter', reply);
+          io.emit('update copter', reply);
         });
       });
     });
