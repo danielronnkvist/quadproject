@@ -21,11 +21,6 @@
     rot y: <span id="roty"></span><br>
     rot z: <span id="rotz"></span><br>
     <br>
-    rotor 1: <span id="rot1"></span><br>
-    rotor 2: <span id="rot2"></span><br>
-    rotor 3: <span id="rot3"></span><br>
-    rotor 4: <span id="rot4"></span><br>
-    <br>
     thrust: <span id="thrust"></span><br>
     <br>
     torqueX: <span id="torqueX"></span><br>
@@ -57,34 +52,44 @@
     scene.add(copter);
 
     // camera.up.set( 0, 0, 1 );
+    camera.position.x -= 5;
     camera.position.z = 5;
-    camera.position.y = 2;
+    camera.up.set( 0, 0, 1 );
+    camera.lookAt(new THREE.Vector3(0,0,0));
     var clock =  new THREE.Clock(),
         controls = flightControl(),
         rotorAngV;
-      copter.position.y = positionInertial._data[1][0];
+
+    copter.position.y = positionInertial._data[1][0];
 
     var render = function () {
       delta = clock.getDelta();
-      requestAnimationFrame( render );
+      setTimeout(function() {requestAnimationFrame( render );}, 1000/30);
+
       // Update velocities and rotations
       controls.update(0.01);
 
       //Use this late, FIXME
-      rotorAngularVelocity = math.matrix([[Math.sqrt(controls.rotors.r1)*controls.hover],
-                               [Math.sqrt(controls.rotors.r2)*controls.hover],
-                               [Math.sqrt(controls.rotors.r3)*controls.hover],
-                               [Math.sqrt(controls.rotors.r4)*controls.hover]]);
+      rotorAngularVelocity = math.matrix([[Math.sqrt(controls.rotors.r1)],
+                               [Math.sqrt(controls.rotors.r2)],
+                               [Math.sqrt(controls.rotors.r3)],
+                               [Math.sqrt(controls.rotors.r4)]]);
       var pos = newPos(0.01);
+
 
       copter.position.x = (pos[0]);
       copter.position.y = (pos[1]);
       copter.position.z = (pos[2]);
 
+      //copter.quaternion.
+      //angles = new THREE.Euler( pos[3], pos[4], pos[5], 'XYZ' );
+      // copter.rotation.x = pos[3];
+      // copter.rotation.y = pos[4];
+      // copter.rotation.z = pos[5];
+      copter.rotateOnAxis(new THREE.Vector3( 0, 0, 1 ), pos[5]);
+      copter.rotateOnAxis(new THREE.Vector3( 0, 1, 0 ), pos[4]);
+      copter.rotateOnAxis(new THREE.Vector3( 1, 0, 0 ), pos[3]);
 
-      copter.rotation.x = pos[3];
-      copter.rotation.y = pos[4];
-      copter.rotation.z = pos[5];
 
       //if(copter.position.y <= 0)
       //  copter.position.y = 2;
@@ -98,14 +103,9 @@
       document.getElementById('py').innerHTML = copter.position.y;
       document.getElementById('pz').innerHTML = copter.position.z;
 
-      document.getElementById('rotx').innerHTML = copter.rotation.x * 57.296; // <-- 180/pi
-      document.getElementById('roty').innerHTML = copter.rotation.y * 57.296; // <-- 180/pi
-      document.getElementById('rotz').innerHTML = copter.rotation.z * 57.296; // <-- 180/pi
-
-      document.getElementById('rot1').innerHTML = controls.rotors.r1;
-      document.getElementById('rot2').innerHTML = controls.rotors.r2;
-      document.getElementById('rot3').innerHTML = controls.rotors.r3;
-      document.getElementById('rot4').innerHTML = controls.rotors.r4;
+      document.getElementById('rotx').innerHTML = pos[3] * 57.296; // <-- 180/pi
+      document.getElementById('roty').innerHTML = pos[4] * 57.296; // <-- 180/pi
+      document.getElementById('rotz').innerHTML = pos[5] * 57.296; // <-- 180/pi
 
       document.getElementById('thrust').innerHTML = pos[6];
 
@@ -113,12 +113,10 @@
       document.getElementById('torqueY').innerHTML = pos[8];
       document.getElementById('torqueZ').innerHTML = pos[9];
 
-      document.getElementById('desH').innerHTML = posMat._data[1][0];
-      document.getElementById('desP').innerHTML = angMat._data[0][0];
-      document.getElementById('desY').innerHTML = angMat._data[1][0];
-      document.getElementById('desR').innerHTML = angMat._data[2][0];
-
-
+      document.getElementById('desH').innerHTML = posMat._data[2][0];
+      document.getElementById('desP').innerHTML = angMat._data[1][0];
+      document.getElementById('desY').innerHTML = angMat._data[2][0];
+      document.getElementById('desR').innerHTML = angMat._data[0][0];
 
       renderer.render(scene, camera);
     };

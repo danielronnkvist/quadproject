@@ -41,38 +41,38 @@ function flightControl(){
 
     if(temp.x.neg){
       // turning left key A
-      angMat._data[2][0]+= delta;
+      angMat._data[0][0]-= delta;
       roll = true;
     }if(temp.x.pos){
       // turning right key D
-      angMat._data[2][0]-= delta;
+      angMat._data[0][0]+= delta;
       roll = true;
     }if(temp.y.neg){
       // going decline key K
-      posMat._data[1][0]-= delta;
+      posMat._data[2][0]-= delta;
       alt= true;
     }if(temp.y.pos){
       // going upwards key I
-      posMat._data[1][0]+= delta;
+      posMat._data[2][0]+= delta;
       alt = true;
     }if(temp.z.neg){ // going forward, key W
-      angMat._data[0][0]-= delta;
+      angMat._data[1][0]+= delta;
       pitch = true;
     }if(temp.z.pos){ // going backwards, key S
-      angMat._data[0][0]+= delta;
+      angMat._data[1][0]-= delta;
       pitch = true;
     }if(temp.yaw.neg){ // yawing clockwise key L
-      angMat._data[1][0]-= delta;
+      angMat._data[2][0]-= delta;
       yaw = true;
     }if(temp.yaw.pos){ // yawing counter-clockwise key J ev. adding a variable
-      angMat._data[1][0]+= delta;
+      angMat._data[2][0]+= delta;
       yaw = true;
     }
 
     if(!pitch)
-      angMat._data[0][0] = 0;
+      angMat._data[1][0] = 0;
     if(!roll)
-      angMat._data[2][0] = 0;
+      angMat._data[0][0] = 0;
 
   };
 

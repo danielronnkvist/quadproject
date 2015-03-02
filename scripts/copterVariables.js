@@ -3,8 +3,8 @@
 // element 1 is y-axis -> up/down on screen
 // element 2 is z-axis -> in/out on screen
 var positionInertial  = math.matrix([[0],
-                                      [2],
-                                      [0]]);
+                                      [0],
+                                      [2]]);
 
 var anglesInertial = math.matrix([[0],
                                    [0],
@@ -37,7 +37,7 @@ var rotorAngularVelocity = math.matrix([[554.65],
 
   // TODO: change the "2", it should be adjustable by the user in flightControl.
   // Used as: Desired position, get from keys pressed
-  var posMat = math.matrix([[0],[2],[0]]);
+  var posMat = math.matrix([[0],[0],[2]]);
   // TODO: change "30", it should be adjustable by user
   // Used as: desired angle, get from keys pressed
   var angMat = math.matrix([[0],[0],[0]]);
