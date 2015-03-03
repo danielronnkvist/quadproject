@@ -7,13 +7,16 @@ var Copter = function(){
   this.blue = new THREE.MeshBasicMaterial( { color: 0x6699FF } );
   this.rotors = [];
   for(var i = 0; i < 4; i++)
-    this.rotors[i] = new THREE.Mesh( this.rotorGeometry, this.blue ).translateY(0.175);;
+    this.rotors[i] = new THREE.Mesh( this.rotorGeometry, this.blue ).translateZ(0.175);;
 
-  this.rotors[0].translateZ(-0.5);
+  this.rotors[0].translateY(-0.5);
+  var m = new THREE.Matrix4();
+  m.makeRotationX(3.14/2);
+  this.copterBody.applyMatrix(m);
 
   this.rotors[1].translateX(0.5);
 
-  this.rotors[2].translateZ(0.5);
+  this.rotors[2].translateY(0.5);
 
   this.rotors[3].translateX(-0.5);
 
@@ -32,8 +35,8 @@ var Copter = function(){
   // element 1 is y-axis -> up/down on screen
   // element 2 is z-axis -> in/out on screen
   this.positionInertial  = math.matrix([[0],
-                                        [2],
-                                        [0]]);
+                                        [0],
+                                        [2]]);
 
   this.anglesInertial = math.matrix([[0],
                                      [0],
@@ -66,7 +69,7 @@ var Copter = function(){
 
   // TODO: change the "2", it should be adjustable by the user in flightControl.
   // Used as: Desired position, get from keys pressed
-  this.posMat = math.matrix([[0],[2],[0]]);
+  this.posMat = math.matrix([[0],[0],[2]]);
   // TODO: change "30", it should be adjustable by user
   // Used as: desired angle, get from keys pressed
   this.angMat = math.matrix([[0],[0],[0]]);
@@ -80,13 +83,13 @@ Copter.prototype.update = function(delta){
                                            [Math.sqrt(this.controls.rotors.r4)*this.controls.hover]]);
   var pos = this.newPos(delta);
 
-  this.object.position.x = (pos[0]);
-  this.object.position.y = (pos[1]);
-  this.object.position.z = (pos[2]);
+  this.object.position.x = pos[0];
+  this.object.position.y = pos[1];
+  this.object.position.z = pos[2];
 
-  this.object.rotation.x = pos[3];
-  this.object.rotation.y = pos[4];
-  this.object.rotation.z = pos[5];
+  this.object.rotateOnAxis(new THREE.Vector3( 1, 0, 0 ), pos[3]);
+  this.object.rotateOnAxis(new THREE.Vector3( 0, 1, 0 ), pos[4]);
+  this.object.rotateOnAxis(new THREE.Vector3( 0, 0, 1 ), pos[5]);
 
   return pos;
 }

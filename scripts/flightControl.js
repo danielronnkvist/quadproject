@@ -69,38 +69,38 @@ FlightControl.prototype.update = function(delta) {
 
   if(this.x.neg){
     // turning left key A
-    this.copter.angMat._data[2][0]+= delta;
+    this.copter.angMat._data[0][0]-= delta;
     roll = true;
   }if(this.x.pos){
     // turning right key D
-    this.copter.angMat._data[2][0]-= delta;
+    this.copter.angMat._data[0][0]+= delta;
     roll = true;
   }if(this.y.neg){
     // going decline key K
-    this.copter.posMat._data[1][0]-= delta;
+    this.copter.posMat._data[2][0]-= delta;
     alt= true;
   }if(this.y.pos){
     // going upwards key I
-    this.copter.posMat._data[1][0]+= delta;
+    this.copter.posMat._data[2][0]+= delta;
     alt = true;
   }if(this.z.neg){ // going forward, key W
-    this.copter.angMat._data[0][0]-= delta;
+    this.copter.angMat._data[1][0]+= delta;
     pitch = true;
   }if(this.z.pos){ // going backwards, key S
-    this.copter.angMat._data[0][0]+= delta;
+    this.copter.angMat._data[1][0]-= delta;
     pitch = true;
   }if(this.yaw.neg){ // yawing clockwise key L
-    this.copter.angMat._data[1][0]-= delta;
+    this.copter.angMat._data[2][0]-= delta;
     yaw = true;
   }if(this.yaw.pos){ // yawing counter-clockwise key J ev. adding a variable
-    this.copter.angMat._data[1][0]+= delta;
+    this.copter.angMat._data[2][0]+= delta;
     yaw = true;
   }
 
   if(!pitch)
-    this.copter.angMat._data[0][0] = 0;
+    this.copter.angMat._data[1][0] = 0;
   if(!roll)
-    this.copter.angMat._data[2][0] = 0;
+    this.copter.angMat._data[0][0] = 0;
 
 };
 

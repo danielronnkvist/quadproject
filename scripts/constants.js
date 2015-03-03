@@ -6,9 +6,9 @@ var gravity = 9.82;
 // mass
 var mass = 0.46;
 // inertia
-var Ixx = 4.856e-3
-var Iyy = 8.801e-3
-var Izz = Ixx;
+var Ixx = 4.856e-3;
+var Iyy = Ixx;
+var Izz = 8.801e-3;
 // lift constant
 var k = 7.98e-6
 // drag contant

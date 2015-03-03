@@ -11,9 +11,9 @@ Copter.prototype.PD = function(gravity, mass, Ixx, Iyy, Izz, vDesired, vActual, 
 	var kzP = 200;
 
 	// calculating the angles in degrees
-	var cx = Math.cos(this.anglesInertial._data[0]/180*Math.PI);
-	var cz = Math.cos(this.anglesInertial._data[2][0]/180*Math.PI);
-	var thrust = (gravity + kzpD * (vDesired._data[1]-vActual._data[1]) + kzpP*(posDesired._data[1]-posActual._data[1]))*mass/(cx*cz);
+	var cx = Math.cos(this.anglesInertial._data[0][0]/180*Math.PI);
+	var cy = Math.cos(this.anglesInertial._data[1][0]/180*Math.PI);
+	var thrust = (gravity + kzpD * (vDesired._data[2]-vActual._data[2]) + kzpP*(posDesired._data[2]-posActual._data[2]))*mass/(cx*cy);
 	var torqX = (kxD*(angVelDesired._data[0]-angVelActual._data[0])+kxP*(anglesDesired._data[0]-anglesActual._data[0]))*Ixx;
 	var torqY = (kyD*(angVelDesired._data[1]-angVelActual._data[1])+kyP*(anglesDesired._data[1]-anglesActual._data[1]))*Iyy;
 	var torqZ = (kzD*(angVelDesired._data[2]-angVelActual._data[2])+kzP*(anglesDesired._data[2]-anglesActual._data[2]))*Izz;
@@ -33,7 +33,6 @@ Copter.prototype.thrustPD = function(torqX, torqY,torqZ, T, k ,l, b, rav) {
     rav._data[1][0] = Math.sqrt(Math.max(T/(4*k) - torqX/(2*k*l) + torqZ/(4*b),0));
     rav._data[2][0] = Math.sqrt(Math.max(T/(4*k) + torqY/(2*k*l) - torqZ/(4*b),0));
     rav._data[3][0] = Math.sqrt(Math.max(T/(4*k) + torqX/(2*k*l) + torqZ/(4*b),0));
-    console.log(rav._data[1][0]);
     return {
     	rav: rav
     };
