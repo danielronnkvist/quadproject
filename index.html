@@ -58,11 +58,10 @@
     copter.object.position.z = copter.positionInertial._data[2][0];
     camera.up.set( 0, 0, 1 );
     camera.lookAt(new THREE.Vector3(0,0,0));
-    var clock =  new THREE.Clock()
 
     var render = function () {
-      delta = clock.getDelta();
-      setTimeout(function() {requestAnimationFrame( render );}, 1000/30);
+      // Call itself after functions end
+      requestAnimationFrame( render );
 
       // Update velocities and rotations
       var pos = copter.update(0.01);

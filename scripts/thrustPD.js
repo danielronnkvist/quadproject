@@ -29,11 +29,9 @@ Copter.prototype.PD = function(gravity, mass, Ixx, Iyy, Izz, vDesired, vActual, 
 Copter.prototype.thrustPD = function(torqX, torqY,torqZ, T, k ,l, b, rav) {
 	// Calculating rotor angular velocity from regulator
 	// T = thrust (from function PD)
-    rav._data[0][0] = Math.sqrt(Math.max(T/(4*k) - torqY/(2*k*l) - torqZ/(4*b),0));
-    rav._data[1][0] = Math.sqrt(Math.max(T/(4*k) - torqX/(2*k*l) + torqZ/(4*b),0));
-    rav._data[2][0] = Math.sqrt(Math.max(T/(4*k) + torqY/(2*k*l) - torqZ/(4*b),0));
-    rav._data[3][0] = Math.sqrt(Math.max(T/(4*k) + torqX/(2*k*l) + torqZ/(4*b),0));
-    return {
-    	rav: rav
-    };
+  rav._data[0][0] = Math.sqrt(Math.max(T/(4*k) - torqY/(2*k*l) - torqZ/(4*b),0));
+  rav._data[1][0] = Math.sqrt(Math.max(T/(4*k) - torqX/(2*k*l) + torqZ/(4*b),0));
+  rav._data[2][0] = Math.sqrt(Math.max(T/(4*k) + torqY/(2*k*l) - torqZ/(4*b),0));
+  rav._data[3][0] = Math.sqrt(Math.max(T/(4*k) + torqX/(2*k*l) + torqZ/(4*b),0));
+  return rav;
 }

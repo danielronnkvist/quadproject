@@ -9,10 +9,11 @@ var Copter = function(){
   for(var i = 0; i < 4; i++)
     this.rotors[i] = new THREE.Mesh( this.rotorGeometry, this.blue ).translateZ(0.175);;
 
-  this.rotors[0].translateY(-0.5);
   var m = new THREE.Matrix4();
   m.makeRotationX(3.14/2);
   this.copterBody.applyMatrix(m);
+
+  this.rotors[0].translateY(-0.5);
 
   this.rotors[1].translateX(0.5);
 
@@ -77,10 +78,6 @@ var Copter = function(){
 
 Copter.prototype.update = function(delta){
   this.controls.update(delta);
-  this.rotorAngularVelocity = math.matrix([[Math.sqrt(this.controls.rotors.r1)*this.controls.hover],
-                                           [Math.sqrt(this.controls.rotors.r2)*this.controls.hover],
-                                           [Math.sqrt(this.controls.rotors.r3)*this.controls.hover],
-                                           [Math.sqrt(this.controls.rotors.r4)*this.controls.hover]]);
   var pos = this.newPos(delta);
 
   this.object.position.x = pos[0];

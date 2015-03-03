@@ -80,10 +80,8 @@ Copter.prototype.calculateLinAcc = function()
   //Use zeroMat for desiredVelocity and desired angularVelocity
   var zeroMat = math.matrix([[0],[0],[0]]);
   var PDvar = this.PD(gravity, mass, Ixx, Iyy, Izz, zeroMat, this.velocity, this.posMat, this.positionInertial, this.angMat, this.anglesInertial, zeroMat, this.angularVelocity);
-  var rotorAngularTemp = this.thrustPD(PDvar.torqX, PDvar.torqY, PDvar.torqZ, PDvar.thrust, k, l, b, this.rotorAngularVelocity);
+  this.rotorAngularVelocity = this.thrustPD(PDvar.torqX, PDvar.torqY, PDvar.torqZ, PDvar.thrust, k, l, b, this.rotorAngularVelocity);
 
-  //var force = calculateForce(rotorAngularVelocity);
-  this.rotorAngularVelocity = rotorAngularTemp.rav;
   var force = this.calculateForce(this.rotorAngularVelocity);
   var thrust = this.calculateThrust(force);
   var rg = math.multiply(transp(R),G);

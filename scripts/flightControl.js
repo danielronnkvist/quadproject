@@ -10,7 +10,7 @@ The function temp.velocities.decrease(t, axis) decreases the velocity on the axi
 
 */
 var FlightControl = function(copter){
-  _this = this;
+  var _this = this;
   this.copter = copter;
   this.x   = { pos: false, neg: false };
   this.y   = { pos: false, neg: false };
@@ -38,7 +38,7 @@ var FlightControl = function(copter){
       case 83: /*S*/ _this.z.pos = true; break;
       case 76: /*L*/ _this.yaw.neg = true; break;
       case 74: /*J*/ _this.yaw.pos = true; break;
-      case 32: /*space*/ _this.reset(); break;
+      case 32: /*space*/ reset(); break;
     };
   };
   document.onkeyup = function(evt) {
@@ -52,7 +52,19 @@ var FlightControl = function(copter){
       case 76: /*L*/ _this.yaw.neg = false; break;
       case 74: /*J*/ _this.yaw.pos = false; break;
     };
-};
+  };
+
+  // Reset the copters values
+  function reset(){
+    _this.copter.controls.copter.position.x = 0;
+    _this.copter.controls.copter.position.y = 0;
+    _this.copter.controls.copter.position.z = 0;
+    _this.copter.controls.copter.rotation.x = 0;
+    _this.copter.controls.copter.rotation.y = 0;
+    _this.copter.controls.copter.rotation.z = 0;
+    _this.rotors.r1 = _this.rotors.r2 = _this.rotors.r3 = _this.rotors.r4 = 1;
+    _this.velocities.x = _this.velocities.y = _this.velocities.z = 0;
+  };
 }
 /*
 
@@ -102,15 +114,4 @@ FlightControl.prototype.update = function(delta) {
   if(!roll)
     this.copter.angMat._data[0][0] = 0;
 
-};
-
-
-// Reset the copters values
-FlightControl.prototype.reset = function(){
-  this.copter.position.setX(0);
-  this.copter.position.setY(0);
-  this.copter.position.setZ(0);
-  this.copter.rotation.y = 0;
-  this.rotors.r1 = this.rotors.r2 = this.rotors.r3 = this.rotors.r4 = 1;
-  this.velocities.x = this.velocities.y = this.velocities.z = 0;
 };
