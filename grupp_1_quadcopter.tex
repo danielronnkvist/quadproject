@@ -1,0 +1,114 @@
+\documentclass[a4paper,12pt,twoside,swedish]{report}
+
+%\graphicspath{{figures/}}
+
+
+\usepackage{times}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{theorem}
+\usepackage[latin1]{inputenc}
+\usepackage{latexsym}
+\usepackage{lipsum}
+\usepackage{url}
+\usepackage{babel}
+
+\headsep          0.25in
+\headheight       12pt
+\setlength{\topmargin}{-\headsep}
+\addtolength{\topmargin}{-\headheight}
+\oddsidemargin      0in
+\evensidemargin     0in
+\setlength{\textwidth}{\paperwidth}
+\addtolength{\textwidth}{-2.0in}
+\setlength{\textheight}{\paperheight}
+\addtolength{\textheight}{-2.0in}
+\addtolength{\textheight}{-1\topskip}
+\divide\textheight  by \baselineskip
+\multiply\textheight  by \baselineskip
+\addtolength{\textheight}{\topskip}
+
+\addto\captionsswedish{
+  \renewcommand{\contentsname}
+    {Innehållsförteckning}
+}
+
+\begin{document}
+
+\pagestyle{empty}
+
+%----------------------------- Front matter of the document
+\title{Quadcopter}
+\date{2015-03-03}
+\author{Kajsa Fredriksson Franzén, Cecilia Lagerwall, \\ Alice Lundin, Daniel Rönnkvist, Erik Sandrén}
+
+\maketitle
+
+\begin{abstract}
+
+\vfill
+\end{abstract}
+
+\tableofcontents  % chapter with the table of contents
+\addtocontents{toc}{\protect\thispagestyle{empty}}
+\listoffigures    % chapter with the list of figures
+\addtocontents{lof}{\protect\thispagestyle{empty}}
+\listoftables     % chapter with the list of tables
+\addtocontents{lot}{\protect\thispagestyle{empty}}
+
+%----------------------------- Body of the document
+
+\pagestyle{plain}
+
+\chapter{Inledning}
+\setcounter{page}{1}
+
+\section{Bakgrund}
+En quadcopter är en obemannad flygande farkost (ofta förkortad UAV på engelska, Unmanned Aerial Vehicle). Den kan liknas med en helikopter med fyra stela rotorer. Fördelen mot en helikopter är att en quadcopter inte har några rörliga delar för att ändra flygriktning, vilket gör dess konstruktion mekaniskt enklare.  De fyra rotorerna är placerade i en kvadratisk formation där avståndet till masscentrum är samma för samtliga rotorer, se figur 1. Rörelsen hos en quadcopter bestäms genom varierande rotationshastighet på de fyra rotorerna.
+
+\section{Syfte och målsättning}
+Syftet med projektet är att skapa en animering av ett fysiskt system baserat på kunskaper om modellbygge och simulering, samt fysik- och programmeringskunskaper hos medieteknikstudenter år 3.
+
+Målet är att en quadcopter ska kunna styras med hjälp av tangenterna på datorn där ett knapptryck representerar en hastighetsökning i bestämd riktning. Quadcoptern ska reagera fysikaliskt korrekt och systemet ska omtolka knapptryckningarna till bestämda vinkelhastigheter för varje rotor. Ett extra mål är att implementera en kontroller för att göra
+systemet stabilt.
+
+\chapter{Your title}
+
+\section{Matematisk modell}
+Kroppen påverkas av två typer av hastigheter; linjär hastighet och vinkelhastighet. Linjär hastighet sker utmed ett av koordinatsystemens axlar, och vinkelhastigheter sker runt en koordinataxel. De rörelser som är möjliga och hur de uppnås visas i tabell 1. Utifrån de ändringar som sker i vinkelhastighet på de fyra rotorerna ändras vinkeln på quadcoptern, vilket resulterar i en förflyttning. Rotorerna roterar åt samma håll över diagonalen. Detta resulterar i att kraftsumman blir noll då alla rotorer snurrar med samma hastighet. För att förändra riktning på quadcoptern ändras vinkelhastigheten på enskilda rotorer och inte genom att byta håll på rotorerna.
+
+\begin{table}[htbp]
+  \caption[Diagram för önskad förflyttning]{Diagram för önskad förflyttning med ökad(+) eller minskad(-) rotationshastighet från svävande läge.}
+  \label{tbl:forflytt}
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+Önskad förflyttning & Rotor 1 & Rotor 2 & Rotor 3 & Rotor 4 \\ \hline
+Upp & + & + & + & + \\
+Ner & - & - & - & - \\
+Framåt & - & & + & \\
+Bakåt & + & & - & \\
+Vänster & & + & & - \\
+Höger & & - & & + \\
+Rotation medurs & + & + & - & - \\
+Rotation moturs & - & - & + & + \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{The argument}
+
+
+\bibliographystyle{vancouver}
+\bibliography{bibsam}
+
+\addcontentsline{toc}{chapter}{Litteraturförteckning}
+
+\pagestyle{empty}
+
+\appendix
+
+\thispagestyle{empty}
+
+\end{document}
+
