@@ -1,9 +1,14 @@
-# quadproject
+Quadproject
+=====
 
-## Intressanta länkar
+This was done in the course Modelling and simulation project at Linköpings University 2015.
+
+Cool project of a simulated quadcopter in WebGL. You can find some math in the matlab branch if you like looking at curves.
+
+A simple multiplayer version is in the making on the game branch using websockets and a node server.
+
+## Interesting links
 http://andrew.gibiansky.com/blog/physics/quadcopter-dynamics/
-
-http://www.ijstr.org/final-print/aug2014/Quadcopter-Flight-Dynamics.pdf
 
 http://www.engr.mun.ca/HosseinRideoutKroug_ICBGM10.pdf
 
