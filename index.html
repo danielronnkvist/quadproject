@@ -49,63 +49,36 @@
     renderer.setSize( window.innerWidth, window.innerHeight );
     document.body.appendChild( renderer.domElement );
 
-    scene.add(copter);
+    var copter = new Copter();
+    scene.add(copter.object);
 
     // camera.up.set( 0, 0, 1 );
     camera.position.x -= 5;
     camera.position.z = 5;
+    copter.object.position.z = copter.positionInertial._data[2][0];
     camera.up.set( 0, 0, 1 );
     camera.lookAt(new THREE.Vector3(0,0,0));
-    var clock =  new THREE.Clock(),
-        controls = flightControl(),
-        rotorAngV;
-
-    copter.position.y = positionInertial._data[1][0];
+    var clock =  new THREE.Clock()
 
     var render = function () {
       delta = clock.getDelta();
       setTimeout(function() {requestAnimationFrame( render );}, 1000/30);
 
       // Update velocities and rotations
-      controls.update(0.01);
-
-      //Use this late, FIXME
-      rotorAngularVelocity = math.matrix([[Math.sqrt(controls.rotors.r1)],
-                               [Math.sqrt(controls.rotors.r2)],
-                               [Math.sqrt(controls.rotors.r3)],
-                               [Math.sqrt(controls.rotors.r4)]]);
-      var pos = newPos(0.01);
-
-
-      copter.position.x = (pos[0]);
-      copter.position.y = (pos[1]);
-      copter.position.z = (pos[2]);
-
-      //copter.quaternion.
-      //angles = new THREE.Euler( pos[3], pos[4], pos[5], 'XYZ' );
-      // copter.rotation.x = pos[3];
-      // copter.rotation.y = pos[4];
-      // copter.rotation.z = pos[5];
-      copter.rotateOnAxis(new THREE.Vector3( 0, 0, 1 ), pos[5]);
-      copter.rotateOnAxis(new THREE.Vector3( 0, 1, 0 ), pos[4]);
-      copter.rotateOnAxis(new THREE.Vector3( 1, 0, 0 ), pos[3]);
-
-
-      //if(copter.position.y <= 0)
-      //  copter.position.y = 2;
+      var pos = copter.update(0.01);
 
       // Display velocities on screen
       document.getElementById('vx').innerHTML = pos[10];
       document.getElementById('vy').innerHTML = pos[11];
       document.getElementById('vz').innerHTML = pos[12];
 
-      document.getElementById('px').innerHTML = copter.position.x;
-      document.getElementById('py').innerHTML = copter.position.y;
-      document.getElementById('pz').innerHTML = copter.position.z;
+      document.getElementById('px').innerHTML = copter.object.position.x;
+      document.getElementById('py').innerHTML = copter.object.position.y;
+      document.getElementById('pz').innerHTML = copter.object.position.z;
 
-      document.getElementById('rotx').innerHTML = pos[3] * 57.296; // <-- 180/pi
-      document.getElementById('roty').innerHTML = pos[4] * 57.296; // <-- 180/pi
-      document.getElementById('rotz').innerHTML = pos[5] * 57.296; // <-- 180/pi
+      document.getElementById('rotx').innerHTML = copter.object.rotation.x * 57.296; // <-- 180/pi
+      document.getElementById('roty').innerHTML = copter.object.rotation.y * 57.296; // <-- 180/pi
+      document.getElementById('rotz').innerHTML = copter.object.rotation.z * 57.296; // <-- 180/pi
 
       document.getElementById('thrust').innerHTML = pos[6];
 
@@ -113,10 +86,10 @@
       document.getElementById('torqueY').innerHTML = pos[8];
       document.getElementById('torqueZ').innerHTML = pos[9];
 
-      document.getElementById('desH').innerHTML = posMat._data[2][0];
-      document.getElementById('desP').innerHTML = angMat._data[1][0];
-      document.getElementById('desY').innerHTML = angMat._data[2][0];
-      document.getElementById('desR').innerHTML = angMat._data[0][0];
+      document.getElementById('desH').innerHTML = copter.posMat._data[2][0];
+      document.getElementById('desP').innerHTML = copter.angMat._data[1][0];
+      document.getElementById('desY').innerHTML = copter.angMat._data[2][0];
+      document.getElementById('desR').innerHTML = copter.angMat._data[0][0];
 
       renderer.render(scene, camera);
     };
